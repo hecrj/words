@@ -1,0 +1,5 @@
+Words
+==================
+Words is a simple command-line tool that estimates the number of different words that a
+file contains. More exactly, it performs a cardinality estimation.
+
