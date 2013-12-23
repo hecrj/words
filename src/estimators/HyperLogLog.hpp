@@ -7,8 +7,8 @@
 class HyperLogLog : public CardinalityEstimator
 {
     vector<int> table;
-    int m, b, mask;
-    int n;
+    unsigned int m, b, lsb, mask;
+    unsigned int n;
 
     public:
         HyperLogLog(int memory);

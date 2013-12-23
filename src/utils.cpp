@@ -1,9 +1,4 @@
-#include "hash.hpp"
-
-int hash(string s)
-{
-    return 1;
-}
+#include "utils.hpp"
 
 int first(int binary)
 {
@@ -12,5 +7,5 @@ int first(int binary)
     while(binary >>= 1)
         pos++;
 
-    return pos;
+    return uint_bits - pos;
 }
