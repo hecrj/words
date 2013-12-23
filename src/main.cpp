@@ -3,7 +3,7 @@
 
 int main()
 {
-    HyperLogLog hloglog = HyperLogLog();
+    HyperLogLog hloglog = HyperLogLog(256);
     hloglog.read(cin);
 
     cout << hloglog.estimation() << ' ' << hloglog.total() << endl;
