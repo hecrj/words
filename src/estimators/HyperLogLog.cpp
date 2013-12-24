@@ -24,7 +24,7 @@ void HyperLogLog::read(istream &stream)
         h = hashing.hash(s);
         j = (h >> lsb);
         w = h & mask;
-        table[j] = max(table[j], first(w));
+        table[j] = max(table[j], first(w) - (int) b);
 
         n++;
     }
