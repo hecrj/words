@@ -10,7 +10,7 @@ class CardinalityEstimator
     public:
         virtual ~CardinalityEstimator(){};
         virtual void read(istream &stream) = 0;
-        virtual int estimation() = 0;
+        virtual unsigned long int estimation() = 0;
         virtual int total() = 0;
 };
 
