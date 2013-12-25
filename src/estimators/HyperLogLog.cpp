@@ -8,7 +8,7 @@ HyperLogLog::HyperLogLog(int memory)
     m = memory;
     table = vector<int>(m, 0);
     b = floor(log2((double) m));
-    lsb = sizeof(unsigned int)*8 - b;
+    lsb = hash_bits - b;
     mask = (1 << lsb) - 1;
     alpha = 0.7213 / (1 + 1.079 / ((double) m));
     n = 0;
@@ -17,7 +17,9 @@ HyperLogLog::HyperLogLog(int memory)
 void HyperLogLog::read(istream &stream)
 {
     string s;
-    unsigned int h, j, w;
+    hash_type h;
+    hash_type w;
+    unsigned int j;
 
     while(stream >> s)
     {

@@ -1,6 +1,6 @@
 /**
  * Some useful functions
  */
-static int uint_bits = sizeof(unsigned int) * 8;
+#include "hashing/UniversalHash.hpp"
 
-int first(int binary);
+int first(hash_type binary);

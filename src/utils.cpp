@@ -1,11 +1,11 @@
 #include "utils.hpp"
 
-int first(int binary)
+int first(hash_type binary)
 {
     int pos = 0;
     
     while(binary >>= 1)
         pos++;
 
-    return uint_bits - pos;
+    return hash_bits - pos;
 }

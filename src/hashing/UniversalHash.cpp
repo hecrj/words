@@ -1,27 +1,35 @@
 #include "UniversalHash.hpp"
-#include <iostream>
+#include <stdlib.h>     /* srand, rand */
+#include <time.h>       /* time */
 
-const unsigned long int UniversalHash::P = 2305843009213693951; // Mersenne Prime: 2^61 - 1
+#ifdef VERBOSE
+#include <iostream>
+#endif
+
+const unsigned long UniversalHash::P = 2305843009213693951; // Mersenne Prime: 2^61 - 1
 
 UniversalHash::UniversalHash()
 {
-    uniform_int_distribution<unsigned long int> dist(1, P);
-    default_random_engine generator;
-    generator.seed(time(0));
-    
-    a = dist(generator);
+    srand(time(NULL));
+    rand(); // Throw first random value (not so random?)
+    a = rand() % P;
+
+    #ifdef VERBOSE
+    cout << "Mersenne prime: " << P << endl;
+    cout << "Hash constant:  " << a << endl;
+    #endif
 }
 
-unsigned int UniversalHash::hash(string s)
+hash_type UniversalHash::hash(string s)
 {
     int i = 0;
-    unsigned long int h = 0;
+    unsigned long h = 0;
 
     while(s[i] != '\0')
     {
-        h += a * ((unsigned long int) s[i]);
+        h += s[i];
         i++;
     }
 
-    return h % P;
+    return (a * h) % P;
 }
