@@ -1,5 +1,4 @@
 #include "HyperLogLog.hpp"
-#include "../utils.hpp"
 #include <cmath>
 #include <iostream>
 
@@ -26,7 +25,7 @@ void HyperLogLog::read(istream &stream)
         h = hashing.hash(s);
         i = (h >> lsb);
         w = h & mask;
-        table[i] = max((int)table[i], first(w) - (int)b);
+        table[i] = max((int)table[i], UniversalHash::leading_zeros(w) - (int)b);
 
         n++;
     }

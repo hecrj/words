@@ -19,6 +19,8 @@ class UniversalHash
 
         UniversalHash();
         hash_type hash(string s);
+
+        static int leading_zeros(hash_type hash);
 };
 
 #endif

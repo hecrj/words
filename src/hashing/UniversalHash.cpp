@@ -39,3 +39,13 @@ hash_type UniversalHash::hash(string s)
 
     return a * hash;
 }
+
+int UniversalHash::leading_zeros(hash_type hash)
+{
+    int pos = 0;
+    
+    while(hash >>= 1)
+        pos++;
+
+    return BITS - pos;
+}
