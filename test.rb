@@ -16,7 +16,16 @@ def separator
   puts "-" * (COLUMNS.size * COLUMN_SIZE)
 end
 
+print "Making executable... "
+`make`
+puts "Done"
+
 test_num, memory = ARGV
+
+test_num ||= 10
+memory   ||= 1024
+
+puts "Performing #{test_num} tests using #{memory} bytes of memory..."
 
 Dir["test/*.dat"].sort!.each do |test|
   real = `sort -u #{test} | wc`.split[0].to_i
@@ -40,3 +49,4 @@ Dir["test/*.dat"].sort!.each do |test|
   separator
 end
 
+puts "Memory used: #{memory} bytes"
