@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include <stdlib.h>
 #include "estimators/HyperLogLog.hpp"
 
@@ -19,7 +20,7 @@ int main(int argc, char *argv[])
         memory = 1024;
     else
     {
-        if(argc < 3) usage();
+        if(argc < 3 or ((string) argv[1]) != "-M") usage();
         else memory = atoi(argv[2]);
     }
 
