@@ -5,26 +5,33 @@
 
 void usage()
 {
-    cout << "Usage:    words [-M <memory>]" << endl;
+    cout << "Usage:    words [-M <memory>] [-S <seed>]" << endl;
     cout << "Options:" << endl;
     cout << "    -M <memory>    Maximum memory to use (in bytes)." << endl;
+    cout << "    -S <seed>      Seed to use in the random generator." << endl;
 
     exit(1);
 }
 
 int main(int argc, char *argv[])
 {
-    int memory;
+    int memory = 1024;
+    int seed = time(NULL);
 
-    if(argc < 2)
-        memory = 1024;
-    else
+    if((argc - 1) % 2 != 0)
+        usage();
+
+    for(int i = 1; i < argc; i += 2)
     {
-        if(argc < 3 or ((string) argv[1]) != "-M") usage();
-        else memory = atoi(argv[2]);
+        string option = argv[i];
+        int value = atoi(argv[i+1]);
+
+        if(option == "-M") memory = value;
+        else if(option == "-S") seed = value;
     }
 
-    HyperLogLog hloglog = HyperLogLog(memory);
+    srand(seed);
+    HyperLogLog hloglog(memory);
     hloglog.read(cin);
 
     #ifdef VERBOSE

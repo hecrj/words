@@ -11,7 +11,6 @@ const int UniversalHash::BITS = sizeof(hash_type) * 8;
 
 UniversalHash::UniversalHash()
 {
-    srand(time(NULL));
     rand(); // Throw first random value (not so random?)
 
     uint64_t r30 = RAND_MAX*rand() + rand();
