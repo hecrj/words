@@ -48,5 +48,3 @@ Dir["test/*.dat"].sort!.each do |test|
 
   separator
 end
-
-puts "Memory used: #{memory} bytes"
