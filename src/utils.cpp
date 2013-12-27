@@ -7,5 +7,5 @@ int first(hash_type binary)
     while(binary >>= 1)
         pos++;
 
-    return hash_bits - pos;
+    return UniversalHash::BITS - pos;
 }

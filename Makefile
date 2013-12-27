@@ -1,6 +1,6 @@
 all: words
 
-words: src/*.cpp src/estimators/*.cpp
+words: src/*.cpp src/estimators/*.cpp src/hashing/*.cpp
 	g++ -O2 -o words src/*.cpp src/estimators/*.cpp src/hashing/*.cpp -DVERBOSE
 
 clean:

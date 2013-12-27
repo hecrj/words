@@ -2,20 +2,21 @@
 #define UniversalHash_HPP
 
 #include <string>
+#include <stdint.h>
 
 using namespace std;
 
-typedef unsigned int hash_type;
-
-const int hash_bits = sizeof(hash_type) * 8;
+typedef uint64_t hash_type;
 
 class UniversalHash
 {
-    static const unsigned long P;
+    static const unsigned long long P;
     
-    unsigned int a;
+    unsigned long long a;
 
     public:
+        static const int BITS;
+
         UniversalHash();
         hash_type hash(string s);
 };

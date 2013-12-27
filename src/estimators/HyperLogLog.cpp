@@ -6,11 +6,11 @@
 HyperLogLog::HyperLogLog(int memory)
 {
     m = memory;
-    table = vector<int>(m, 0);
+    table = vector<unsigned char>(m, 0);
     b = floor(log2((double) m));
-    lsb = hash_bits - b;
+    lsb = UniversalHash::BITS - b;
     mask = (1 << lsb) - 1;
-    alpha = 0.7213 / (1 + 1.079 / ((double) m));
+    alpha = 0.7213 / (1.0 + 1.079 / m);
     n = 0;
 }
 
@@ -19,27 +19,27 @@ void HyperLogLog::read(istream &stream)
     string s;
     hash_type h;
     hash_type w;
-    unsigned int j;
+    unsigned int i;
 
     while(stream >> s)
     {
         h = hashing.hash(s);
-        j = (h >> lsb);
+        i = (h >> lsb);
         w = h & mask;
-        table[j] = max(table[j], first(w) - (int) b);
+        table[i] = max((int)table[i], first(w) - (int)b);
 
         n++;
     }
 }
 
-unsigned long int HyperLogLog::estimation()
+estimation_t HyperLogLog::estimation()
 {
     double sum = 0;
 
     for(int i = 0; i < m; ++i)
         sum += 1.0 / (1 << table[i]);
 
-    unsigned long int raw = alpha * m * m * (1.0 / sum);
+    estimation_t raw = alpha * m * m * (1.0 / sum);
 
     if(raw < (2.5 * m))
     {
@@ -57,7 +57,7 @@ unsigned long int HyperLogLog::estimation()
     return raw;
 }
 
-int HyperLogLog::total()
+estimation_t HyperLogLog::total()
 {
     return n;
 }

@@ -6,30 +6,36 @@
 #include <iostream>
 #endif
 
-const unsigned long UniversalHash::P = 2305843009213693951; // Mersenne Prime: 2^61 - 1
+const unsigned long long UniversalHash::P = 2305843009213693951; // Mersenne Prime: 2^61 - 1
+const int UniversalHash::BITS = sizeof(hash_type) * 8;
 
 UniversalHash::UniversalHash()
 {
     srand(time(NULL));
     rand(); // Throw first random value (not so random?)
-    a = rand() % P;
+
+    uint64_t r30 = RAND_MAX*rand() + rand();
+    uint64_t s30 = RAND_MAX*rand() + rand();
+    int t4  = rand() & 0xf;
+
+    a = (r30 << 34) + (s30 << 4) + t4;
 
     #ifdef VERBOSE
-    cout << "Mersenne prime: " << P << endl;
-    cout << "Hash constant:  " << a << endl;
+    cout << "Hash bits:       " << BITS << endl; 
+    cout << "Hash random int: " << a << endl;
     #endif
 }
 
 hash_type UniversalHash::hash(string s)
 {
+    hash_type hash = 5381;
+    
     int i = 0;
-    unsigned long h = 0;
-
-    while(s[i] != '\0')
+    while(i < s.size())
     {
-        h += s[i];
-        i++;
+        hash = ((hash << 5) + hash) + ((int) s[i]); /* hash * 33 + c */
+        ++i;
     }
 
-    return (a * h) % P;
+    return a * hash;
 }

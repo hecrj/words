@@ -8,8 +8,9 @@
 class HyperLogLog : public CardinalityEstimator
 {
     UniversalHash hashing;
-    vector<int> table;
-    unsigned int m, b, lsb, mask;
+    vector<unsigned char> table;
+    unsigned int m, b, lsb;
+    hash_type mask;
     double alpha;
     unsigned int n;
 
@@ -17,8 +18,8 @@ class HyperLogLog : public CardinalityEstimator
         HyperLogLog(int memory);
 
         void read(istream &stream);
-        unsigned long int estimation();
-        int total();
+        estimation_t estimation();
+        estimation_t total();
 
     private:
         int count_zeros();
