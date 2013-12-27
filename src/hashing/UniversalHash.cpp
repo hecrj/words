@@ -1,6 +1,6 @@
 #include "UniversalHash.hpp"
-#include <stdlib.h>     /* srand, rand */
-#include <time.h>       /* time */
+#include <stdlib.h>
+#include <time.h>
 
 #ifdef VERBOSE
 #include <iostream>
