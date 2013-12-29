@@ -37,13 +37,12 @@ Dir["test/*.dat"].sort!.each do |test|
   test_num.to_i.times do |i|
     seed = Random.new_seed % 2147483647
 
-    start = Time.now
-    result = `./words -M #{memory} -S #{seed} < #{test}`
-    finish = Time.now
+    result = `bash -c "TIMEFORMAT='%3R'; time ./words -M #{memory} -S #{seed} < #{test}" 2>&1`
 
-    estimation, total = result.split
+    estimation, total = result.lines.first.split
+    time = result.lines.last.to_f * 1000
 
-    row i+1, estimation, ((real - estimation.to_f) / real).abs.round(5), ((finish - start) * 1000).round(5)
+    row i+1, estimation, ((real - estimation.to_f) / real).abs.round(3), time.to_i
   end
 
   separator
