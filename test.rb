@@ -42,7 +42,7 @@ test_num, memory, test, dir = ARGV
 
 test_num ||= 10
 memory   ||= 1024
-test     ||= "*"
+test     = "*" if test.nil? or test == "all"
 dir      ||= "data"
 
 if File.exists?(dir)
