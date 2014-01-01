@@ -1,26 +1,23 @@
 #ifndef UniversalHash_HPP
 #define UniversalHash_HPP
 
-#include <string>
 #include <stdint.h>
 
 using namespace std;
 
-typedef uint64_t hash_type;
+typedef uint64_t hash_t;
 
 class UniversalHash
 {
-    static const unsigned long long P;
-    
     unsigned long long a;
 
     public:
         static const int BITS;
 
         UniversalHash();
-        hash_type hash(string s);
+        hash_t hash(unsigned char *str);
 
-        static int leading_zeros(hash_type hash);
+        static int leading_zeros(hash_t hash);
 };
 
 #endif

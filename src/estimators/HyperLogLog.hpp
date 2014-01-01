@@ -5,19 +5,21 @@
 #include "../hashing/UniversalHash.hpp"
 #include <vector>
 
+using namespace std;
+
 class HyperLogLog : public CardinalityEstimator
 {
     UniversalHash hashing;
     vector<unsigned char> table;
     unsigned int m, b, lsb;
-    hash_type mask;
+    hash_t mask;
     double alpha;
     unsigned int n;
 
     public:
         HyperLogLog(int memory);
 
-        void read(istream &stream);
+        void read();
         estimation_t estimation();
         estimation_t total();
 

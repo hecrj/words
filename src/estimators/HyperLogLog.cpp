@@ -1,6 +1,12 @@
 #include "HyperLogLog.hpp"
 #include <cmath>
+#include <cstdio>
+
+#ifdef VERBOSE
 #include <iostream>
+#endif
+
+static const int MAX_LENGTH = 30;
 
 HyperLogLog::HyperLogLog(int memory)
 {
@@ -13,22 +19,30 @@ HyperLogLog::HyperLogLog(int memory)
     n = 0;
 }
 
-void HyperLogLog::read(istream &stream)
+void HyperLogLog::read()
 {
-    string s;
-    hash_type h;
-    hash_type w;
+    unsigned char str[MAX_LENGTH];
+    hash_t h;
+    hash_t w;
     unsigned int i;
 
-    while(stream >> s)
+#ifdef VERBOSE
+    cout << "Read started" << endl;
+#endif
+
+    while(scanf("%s", str) != EOF)
     {
-        h = hashing.hash(s);
+        h = hashing.hash(str);
         i = (h >> lsb);
         w = h & mask;
         table[i] = max((int)table[i], UniversalHash::leading_zeros(w) - (int)b);
 
         n++;
     }
+
+#ifdef VERBOSE
+    cout << "Read finished" << endl;
+#endif
 }
 
 estimation_t HyperLogLog::estimation()

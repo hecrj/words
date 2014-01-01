@@ -15,30 +15,34 @@ void usage()
 
 int main(int argc, char *argv[])
 {
+    // Default parameters
     int memory = 1024;
     int seed = time(NULL);
 
+    // Option parsing
     if((argc - 1) % 2 != 0)
         usage();
 
     for(int i = 1; i < argc; i += 2)
     {
         string option = argv[i];
-        int value = atoi(argv[i+1]);
 
-        if(option == "-M") memory = value;
-        else if(option == "-S") seed = value;
+        if(option == "-M") memory = atoi(argv[i+1]);
+        else if(option == "-S") seed = atoi(argv[i+1]);
     }
 
+    // Set seed
     srand(seed);
+
+    // Read input
     HyperLogLog hloglog(memory);
-    hloglog.read(cin);
+    hloglog.read();
 
     #ifdef VERBOSE
         cout << "Memory used:     ~" << memory << " bytes" << endl;
     #endif
 
-    // Perform estimation
+    // Print estimation
     cout << hloglog.estimation() << ' ' << hloglog.total() << endl;
 
     return 0;
