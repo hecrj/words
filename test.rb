@@ -4,7 +4,7 @@
 # Cantidad de columnas para estructurar la salida
 COLUMN_NUM  = 4
 # Tamaño de cada columna
-COLUMN_SIZE = 12
+COLUMN_SIZE = 15
 
 ### FUNCIONES ###
 # Devuelve diferentes datos en columnas.
@@ -51,6 +51,18 @@ def status(message, cmd)
 end
 
 ### CLASES ###
+class Array
+  def sum
+    inject(0){|sum, x| sum + x}
+  end
+end
+
+class Float
+  def to_s
+    "%.3f" % self
+  end
+end
+
 # Representa un caso de una muestra
 class Case
   # Esta línea autogenera métodos para leer atributos
@@ -66,7 +78,7 @@ class Case
 
   # La representación de un caso en String es la fila de una tabla
   def to_s
-    row(@i, @estimation, "%.3f" % @error, "%.3f" % @time)
+    row(@i, @estimation, @error, @time)
   end
 
   # Devuelve la cabecera de la tabla para cualquier caso
@@ -137,29 +149,44 @@ class Sample
     # Crear el fichero con la muestra
     File.open(sample_file, 'w') do |file|
       file.puts Case.header
-      @cases.each { |current_case| file.puts current_case }
+      file.puts *@cases
     end
 
     say_status "Writing file #{sample_file}", :done
 
     # Crear el fichero con información general
     File.open(summary_file, 'w') do |file|
-      file.puts row('real', 'total')
-      file.puts row(@real, @total)
+      header = row('real', 'total', 'avgTimeMs', 'timePerWordUs', 'avgEstimation', 'stdError')
+      body   = row(@real, @total, average(:time), time_per_word, average(:estimation), standard_error)
+      
+      file.puts header, body
     end
 
     say_status "Writing file #{summary_file}", :done
+  end
+
+  def average(attribute)
+    @cases.map{ |sample_case| sample_case.send(attribute) }.sum / @cases.size
+  end
+
+  def time_per_word
+    (average(:time) / @total) * 1000
+  end
+
+  def standard_error
+    est = @cases.map{ |sample_case| sample_case.estimation**2 }.sum / @cases.size
+    Math.sqrt(est - average(:estimation)**2) / @real
   end
 end
 
 ### PROGRAMA PRINCIPAL ###
 # Obtener los argumentos
-num_cases, memory, dataset, dir = ARGV
+datasets, memorys, num_cases, dir = ARGV
 
 # Valores por defecto
-num_cases    = num_cases.to_i || 50
-memory       = memory.to_i    || 1024
-dataset      = "*" if dataset.nil? or dataset == "all"
+num_cases  ||= "200"
+memorys    ||= "1024"
+datasets      = "*" if datasets.nil? or datasets == "all"
 dir        ||= "data"
 
 # Pedir confirmación si el directorio de muestras ya existe
@@ -172,17 +199,20 @@ end
 # Generar el ejecutable a través del Makefile
 status "Making executable", "make"
 
+memorys = memorys.split(',')
+
 # Dir[ruta] devuelve un Array de strings con los archivos desde el directorio de
 # trabajo que coinciden con la ruta. Por defecto la ruta es: "dataset/*.dat",
 # por lo que se obtienen muestras de todos los datasets.
 # Por cada dataset que coincida con la ruta, de manera ordenada:
-Dir["dataset/#{dataset}.dat"].sort!.each do |dataset|
-  # Imprimir la ruta del dataset como título
-  puts dataset.center(COLUMN_NUM * COLUMN_SIZE, '=')
+Dir["dataset/#{datasets}.dat"].sort!.each do |dataset|
+  memorys.each do |memory|
+    puts "#{dataset} with #{memory} bytes".center(COLUMN_NUM * COLUMN_SIZE, '=')
 
-  sample = Sample.new(dataset, memory)
-  sample.obtain_cases!(num_cases)
-  sample.save(dir)
+    sample = Sample.new(dataset, memory.to_i)
+    sample.obtain_cases!(num_cases.to_i)
+    sample.save(dir)
+  end
 
   puts separator
 end
