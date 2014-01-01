@@ -19,8 +19,8 @@ UniversalHash::UniversalHash()
     a = (r30 << 34) + (s30 << 4) + t4;
 
     #ifdef VERBOSE
-    cout << "Hash bits:       " << BITS << endl; 
-    cout << "Hash random int: " << a << endl;
+        cout << "Hash bits:       " << BITS << endl; 
+        cout << "Hash random int: " << a << endl;
     #endif
 }
 

@@ -5,7 +5,7 @@
 
 void usage()
 {
-    cout << "Usage:    words [-M <memory>] [-S <seed>]" << endl;
+    cout << "Usage:    words [-M <memory>] [-S <seed>] FILENAME" << endl;
     cout << "Options:" << endl;
     cout << "    -M <memory>    Maximum memory to use (in bytes)." << endl;
     cout << "    -S <seed>      Seed to use in the random generator." << endl;
@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     int seed = time(NULL);
 
     // Option parsing
-    if((argc - 1) % 2 != 0)
+    if(argc < 2 or argc % 2 != 0)
         usage();
 
     for(int i = 1; i < argc; i += 2)
@@ -31,12 +31,14 @@ int main(int argc, char *argv[])
         else if(option == "-S") seed = atoi(argv[i+1]);
     }
 
+    string filename = argv[argc-1];
+
     // Set seed
     srand(seed);
 
     // Read input
     HyperLogLog hloglog(memory);
-    hloglog.read();
+    hloglog.read(filename);
 
     #ifdef VERBOSE
         cout << "Memory used:     ~" << memory << " bytes" << endl;

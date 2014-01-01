@@ -11,15 +11,17 @@ class HyperLogLog : public CardinalityEstimator
 {
     UniversalHash hashing;
     vector<unsigned char> table;
-    unsigned int m, b, lsb;
+    int memory;
+    int msbits;
+    int lsbits;
     hash_t mask;
     double alpha;
-    unsigned int n;
+    unsigned int total_read;
 
     public:
         HyperLogLog(int memory);
 
-        void read();
+        void read(const string &filename);
         estimation_t estimation();
         estimation_t total();
 

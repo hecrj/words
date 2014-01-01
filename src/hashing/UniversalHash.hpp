@@ -2,6 +2,7 @@
 #define UniversalHash_HPP
 
 #include <stdint.h>
+#include <string>
 
 using namespace std;
 
@@ -9,7 +10,7 @@ typedef uint64_t hash_t;
 
 class UniversalHash
 {
-    unsigned long long a;
+    hash_t a;
 
     public:
         static const int BITS;

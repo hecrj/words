@@ -112,7 +112,7 @@ class Sample
 
       # Ejecutar el programa y obtener datos
       start = Time.now
-      result = `./words -M #{@memory} -S #{seed} < #{@dataset}`
+      result = `./words -M #{@memory} -S #{seed} #{@dataset}`
       finish = Time.now
 
       # La estimación es el primer entero devuelto
