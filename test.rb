@@ -184,9 +184,9 @@ end
 datasets, memorys, num_cases, dir = ARGV
 
 # Valores por defecto
-num_cases  ||= "200"
-memorys    ||= "1024"
 datasets      = "*" if datasets.nil? or datasets == "all"
+memorys    ||= "1024"
+num_cases  ||= "200"
 dir        ||= "data"
 
 # Pedir confirmación si el directorio de muestras ya existe
