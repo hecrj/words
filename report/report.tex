@@ -1,0 +1,62 @@
+% !TEX program = lualatex
+% !TEX encoding = UTF-8 Unicode
+% 
+\newcommand{\titol}{Estimación de cardinalidad}
+\newcommand{\materia}{Algorítmica}
+\newcommand{\idioma}{english,spanish}
+\newcommand{\pdfauthors}{Héctor Ramón Jiménez, Xavier Serra Alza}
+\newcommand{\autors}[1]{\begin{tabular}{#1} Ramón -- Serra\end{tabular}}
+\newcommand{\data}{\today}
+\include{header}
+\setstretch{1.0}
+\DefineBibliographyStrings{spanish}{%
+  references = {Referencias},
+}
+
+\title{\materia\\
+\Large{\titol}}
+\subtitle{Facultat d'Informàtica de Barcelona\\ % Pongo la I mayúscula porque la FIB lo hace
+Universitat Politècnica de Catalunya}
+\author{
+  Héctor Ramón Jiménez \\
+  Xavier Serra Alza}
+\date{
+  \today \\
+  cuatrimestre de otoño \\
+  curso 2013--2014}
+
+\everymath{\displaystyle}
+
+\newcommand{\CC}{\mathbb{C}}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\bigO}[1]{\ensuremath{\operatorname{O}\left(#1\right)}}% big-O notation/symbol
+\newcommand{\bigOmega}[1]{\ensuremath{\operatorname{\Omega}\left(#1\right)}}% big-O notation/symbol
+\newcommand{\bigTheta}[1]{\ensuremath{\operatorname{\Theta}\left(#1\right)}}% big-O notation/symbol
+\newcommand{\slot}[1]{\textsl{\texttt{#1}}}
+\newcommand{\clase}[1]{\texttt{#1}}
+\newcommand{\regla}[1]{\textsl{\textsf{#1}}}
+
+\newenvironment{slotlist}{%
+   \renewcommand\descriptionlabel[1]{\hspace{\labelsep}\slot{##1}}
+   \begin{description}%
+}{%
+   \end{description}%
+}
+
+\bibliography{references}
+\begin{document}
+
+\maketitle
+\tableofcontents
+\listoftables
+\listoffigures
+\vfill
+\cleardoublepage
+
+\input{sections/introduccion}
+\input{sections/investigacion}
+\input{sections/analisis}
+\input{sections/conclusiones}
+
+\end{document}

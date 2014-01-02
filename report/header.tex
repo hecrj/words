@@ -1,0 +1,213 @@
+% !TEX encoding = UTF-8 Unicode
+% !TEX root = report.tex
+% 
+\documentclass[a4paper,11pt,twoside,titlepage,abstract,numbers=noenddot,automark,mnsy,intlimits,rgb,dvipsnames]{scrartcl}
+%\usepackage[utf8]{inputenc}
+\usepackage{csquotes}
+\usepackage[\idioma, es-tabla]{babel}
+\spanishdecimal{.}
+\usepackage{fontspec}
+\defaultfontfeatures{Scale=MatchLowercase, Ligatures=TeX}
+\usepackage{pdfpages}
+\usepackage{fancyvrb}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{unicode-math}
+\unimathsetup{math-style=ISO,vargreek-shape=unicode}
+\usepackage{xunicode}
+\usepackage{ifxetex}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\ifxetex
+  \usepackage{xltxtra}
+\fi
+\usepackage{verbatim}
+
+\usepackage[binary-units]{siunitx}
+\sisetup{
+  product-units=single,
+  list-units=single,
+  per-mode=symbol,
+  list-final-separator = { y },
+  list-pair-separator = { y },
+  range-phrase = { a },
+}
+
+\usepackage{fullpage}
+\usepackage{framed}
+\usepackage{xfrac}
+
+\defaultfontfeatures{Path=fonts/, Scale=MatchLowercase}
+\setmainfont[Ligatures=TeX,
+BoldFont=texgyrepagella-bold.otf,
+BoldItalicFont=texgyrepagella-bolditalic.otf,
+ItalicFont=texgyrepagella-italic.otf]{texgyrepagella-regular.otf} %use this font
+\setsansfont[Ligatures=TeX,
+BoldFont=lmsans10-bold.otf,
+BoldItalicFont=lmsans10-boldoblique.otf,
+ItalicFont=lmsans10-oblique.otf]{lmsans10-regular.otf}
+\setmonofont[BoldFont=lmmonolt10-bold.otf,
+BoldItalicFont=lmmonolt10-boldoblique.otf,
+ItalicFont=lmmono10-italic.otf,
+SlantedFont=lmmonoslant10-regular.otf]{lmmono10-regular.otf}
+\setmathfont{texgyrepagella-math.otf}
+\setmathfont[range={\mathcal,\mathbfcal},StylisticSet=1]{xits-math.otf}
+
+\usepackage[super]{nth}
+%\setmathfont[ Path=fonts/, ]{LM Math}
+%\usepackage{natbib}
+\usepackage[natbib=true,language=english,style=numeric,citestyle=numeric,bibstyle=numeric,hyperref=true]{biblatex}
+
+\usepackage{url}
+\usepackage{pdflscape}
+\usepackage{enumitem}
+
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{multicol}
+\usepackage{booktabs}
+
+\usepackage[hidelinks]{hyperref}
+\hypersetup{
+    pdfencoding=auto,
+    pdffitwindow=false,      % page fit to window when opened
+    pdftitle={\materia\ :: \titol},    % title
+    pdfauthor={\pdfauthors},     % author
+    pdfsubject={},   % subject of the document
+    pdfcreator={XeLaTeX + Hyperref package},
+    colorlinks=false
+}
+
+\usepackage{setspace}
+
+\usepackage[nouppercase]{scrpage2}
+
+\setlength{\headheight}{15pt}
+\renewcommand{\headfont}{\upshape}
+\defpagestyle{curr}
+  {    %% superior
+    (\textwidth,0pt) %líneas
+    {    %%par
+      {\autors{l}}
+      {\hfill}
+      {\leftmark}
+    }
+    {	%%impar
+      {\rightmark}
+      {\hfill}
+      {\autors{r}}
+    }
+    {	%% una sola cara
+      {\thepart}
+      {\hfill}
+      {\autors{r}}
+    }
+    (\textwidth,0.5pt) %líneas
+  }
+  {		%% inferior
+    (\textwidth,0.5pt) %líneas
+    {	%%par
+      {\thepage}
+      {\hfill}
+      {\materia}
+    }
+    {	%%impar
+      {\titol}
+      {\hfill}
+      {\thepage}
+    }
+    {	%% una sola cara
+      {\materia: \titol}
+      {\hfill}
+      {\thepage}
+    }
+    (\textwidth,0pt) %líneas
+  }
+
+\pagestyle{curr}
+
+\headsep = 15pt
+%\addtolength{\footskip}{-16pt}
+%\addtolength{\textheight}{+16pt}
+\addtolength{\topmargin}{-15pt}
+\addtolength{\hoffset}{12mm}
+\addtolength{\textwidth}{-11mm}
+\usepackage{wrapfig}
+
+\usepackage{amsthm}
+%~ \theoremprework {\textcolor{white} {\rule{0.2in}{0.11in}} \hrule\rule{0.2in}{0.11in}}
+%~ \theorempostwork {\hrule %\textcolor{white} {\rule{0.2in}{0.11in}}
+%~ }
+
+\makeatletter
+\newcommand{\strong}[1]{\@strong{#1}}
+\newcommand{\@@strong}[1]{\textbf{\let\@strong\@@@strong#1}}
+\newcommand{\@@@strong}[1]{\textnormal{\let\@strong\@@strong#1}}
+\let\@strong\@@strong
+\makeatother
+
+%~ \theoremindent0.5cm
+%~ \theoremstyle{break}
+%~ \theorembodyfont{}
+%~ \newtheorem*{defi}{}
+
+\theoremstyle{plain}% default
+\newtheorem{thm}{Teorema}[section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}{Proposition}
+\newtheorem{cor}{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}[section]
+\newtheorem{conj}{Conjecture}[section]
+\newtheorem{exmp}{Example}[section]
+
+\theoremstyle{remark}
+\newtheorem*{obs}{Observation}
+\newtheorem*{note}{Remark}
+\newtheorem{case}{Case}
+\newtheorem*{notation}{Notation}
+
+\addtolength{\voffset}{-15pt}
+\addtolength{\headsep}{10pt}
+\addtolength{\textheight}{35pt}
+\addtolength{\footskip}{-20pt}
+\addtolength{\textwidth}{15pt}
+\addtolength{\marginparwidth}{-20pt}
+\addtolength{\oddsidemargin}{-20pt}
+\addtolength{\evensidemargin}{-20pt}
+
+\usepackage{listings}
+
+\definecolor{FonsCodi}{cmyk}{0,0,0,0.04}
+\definecolor{Comentaris}{cmyk}{0,0,0,0.6}
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.6,0.6,0.6}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\definecolor{darkgreen}{rgb}{0.2,0.5,0.2}
+\definecolor{orange}{rgb}{1,0.5,0}
+
+\lstset{ %
+basicstyle=\ttfamily\small,
+numbers=none,                   % where to put the line-numbers
+backgroundcolor=\color{FonsCodi},  % choose the background color. You must add \usepackage{color}
+rulesepcolor=\color{FonsCodi},
+lineskip=-2.5pt,
+showspaces=false,               % show spaces adding particular underscores
+showstringspaces=false,         % underline spaces within strings
+showtabs=false,                 % show tabs within strings adding particular underscores
+frame=single,                    % adds a frame around the code
+tabsize=8,	                % sets default tabsize to 2 spaces
+captionpos=t,                   % sets the caption-position to top
+breaklines=true,                % sets automatic line breaking
+breakatwhitespace=true,        % sets if automatic breaks should only happen at whitespace
+escapeinside={\%*}{*)},          % if you want to add a comment within your code
+columns=flexible
+}
+
+\renewcommand{\lstlistlistingname}{Lista de ejecuciones}
+\renewcommand{\lstlistingname}{Ejecución}
