@@ -19,19 +19,32 @@ int main(int argc, char *argv[])
     int memory = 1024;
     int seed = time(NULL);
 
-    // Option parsing
-    if(argc < 2 or argc % 2 != 0)
+    // Parameter/option parsing
+    if(argc < 2)
         usage();
 
-    for(int i = 1; i < argc; i += 2)
+    string filename = "";
+
+    int i = 1;
+    while(filename.size() == 0)
     {
-        string option = argv[i];
+        if(i >= argc)
+            usage();
+        
+        string param = argv[i++];
+        
+        if(param[0] != '-')
+        {
+            filename = param;
+            break;
+        }
 
-        if(option == "-M") memory = atoi(argv[i+1]);
-        else if(option == "-S") seed = atoi(argv[i+1]);
+        if(i >= argc)
+            usage();
+
+        if(param == "-M") memory = atoi(argv[i++]);
+        else if(param == "-S") seed = atoi(argv[i++]);
     }
-
-    string filename = argv[argc-1];
 
     // Set seed
     srand(seed);
@@ -39,10 +52,6 @@ int main(int argc, char *argv[])
     // Read input
     HyperLogLog hloglog(memory);
     hloglog.read(filename);
-
-    #ifdef VERBOSE
-        cout << "Memory used:     ~" << memory << " bytes" << endl;
-    #endif
 
     // Print estimation
     cout << hloglog.estimation() << ' ' << hloglog.total() << endl;

@@ -8,10 +8,10 @@ static const int MAX_LENGTH = 30;
 
 HyperLogLog::HyperLogLog(int m)
 {
-    memory = m;
-    table = vector<unsigned char>(memory, 0);
-    msbits = floor(log2((double) memory));
+    msbits = floor(log2((double) m));
     lsbits = UniversalHash::BITS - msbits;
+    memory = (1 << msbits);
+    table = vector<unsigned char>(memory, 0);
     mask = (1 << lsbits) - 1;
     alpha = 0.7213 / (1.0 + 1.079 / memory);
     total_read = 0;
@@ -48,6 +48,7 @@ void HyperLogLog::read(const string &filename)
 
     #ifdef VERBOSE
         cout << "Read finished" << endl;
+        cout << "Memory used:     ~" << memory << " bytes" << endl;
     #endif
 }
 
