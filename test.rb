@@ -32,7 +32,7 @@ end
 # Recibe un mensaje y un comando a ejecutar en la shell.
 # 1. Imprime y muestra el mensaje alineado a la izquierda.
 # 2. Ejecuta el comando
-# 3. Si el comando falla, muestra "failed" i termina la ejecución.
+# 3. Si el comando falla, muestra "failed" y termina la ejecución.
 #    Si el comando se ejecuta correctamente, muestra "done" y devuelve una string con el output
 #    producido por la ejecución del comando.
 def status(message, cmd)
@@ -136,13 +136,17 @@ class Sample
   def save(dir)
     # Nombre del dataset
     dataset_name = File.basename(@dataset, '.dat')
-    # Ruta del archivo que contendrá información general de la muestra
-    summary_file = "#{dir}/#{dataset_name}/summary_#{@memory}.txt"
-    # Ruta del archivo que contendrá la muestra
-    sample_file  = "#{dir}/#{dataset_name}/sample_#{@memory}.txt"
+
+    # Ruta dataset
+    dataset_path = "#{dir}/#{dataset_name}/%s_#{@memory}.txt"
+
+    # Rutas de archivos para el dataset
+    sample_file  = dataset_path % 'sample'
+    summary_file = dataset_path % 'summary'
+    count_file   = dataset_path % 'count'
 
     # Se prepara el directorio que contendrá los resultados, a no ser que exista
-    unless File.exists?("#{dir}/#{dataset_name}")
+    unless File.exists?("")
       status "Creating directory #{dir}/#{dataset_name}", "mkdir -p #{dir}/#{dataset_name}"
     end
 
@@ -163,6 +167,28 @@ class Sample
     end
 
     say_status "Writing file #{summary_file}", :done
+
+    # Crear el fichero con recuento
+    File.open(count_file, 'w') do |file|
+      header = ['0to1', '1to5']
+      body = [ count_error_between(0, 0.01), count_error_between(0.01, 0.05) ]
+
+      8.times do |i|
+        start = (i+1)*5
+        fin   = start+5
+
+        header << "#{start}to#{fin}"
+        body   << count_error_between(start/100.0, fin/100.0)
+      end
+
+      header << 'total'
+      body   << body.sum
+
+      file.puts row(*header)
+      file.puts row(*body)
+    end
+
+    say_status "Writing file #{count_file}", :done
   end
 
   def average(attribute)
@@ -177,6 +203,10 @@ class Sample
     est = @cases.map{ |sample_case| sample_case.estimation**2 }.sum / @cases.size
     Math.sqrt(est - average(:estimation)**2) / @real
   end
+
+  def count_error_between(a, b)
+    @cases.select{ |sample_case| a <= sample_case.error and sample_case.error < b }.size
+  end
 end
 
 ### PROGRAMA PRINCIPAL ###
@@ -184,7 +214,7 @@ end
 datasets, memorys, num_cases, dir = ARGV
 
 # Valores por defecto
-datasets      = "*" if datasets.nil? or datasets == "all"
+datasets     = "*" if datasets.nil? or datasets == "all"
 memorys    ||= "1024"
 num_cases  ||= "200"
 dir        ||= "data"
