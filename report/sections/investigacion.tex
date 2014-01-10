@@ -8,18 +8,36 @@ del artículo \citetitle{hll:HyperLogLog} ~\cite{hll:HyperLogLog}.
 El artículo presenta una descripción detallada del algoritmo y sus ventajas en relación a otros
 algoritmos de estimación de cardinalidad.
 
+En esta sección se introducen y se explican, de manera general, las bases del algoritmo \texttt{HyperLogLog}.
+
 \subsection{Funciones de hash}
 
-La idea principal de \texttt{HyperLogLog} gira en torno a las funciones de hash.
-Una buena función de hash debe ser \textbf{uniforme}...
+Una \textbf{función de hash} se define como una función que mapea todo elemento de un
+conjunto de tamaño arbitrario $A$ con otro elemento de un conjunto de tamaño finito $B$.
+$$f: A \rightarrow B$$
 
-\subsection{Descripción detallada del algoritmo}
-aprovecha la unformidad que proporcionan las funciones de hash. La idea básica del algoritmo es la
-siguiente:
+Una \textbf{buena} función de hash debe ser lo más \textbf{uniforme} posible, es decir, debe mapear los elementos de
+$A$ tan \textbf{equitativamente} como sea posible sobre $B$. En otras palabras, todo elemento en $B$ debe ser generado
+por la función de hash con \textbf{aproximadamente la misma probabilidad}.
 
-Entre las propiedades de las funciones de hash está el que los bits de la salida son independientes
-y cada uno tiene un 50$\%$ de posibilidades de ocurrir. Teniendo esto en cuenta, se puede esperar
-que:
+Por lo tanto, si $f_h$ es una buena función de hash:
+$$f_h: \Sigma^* \rightarrow \{0,1\}^n$$
+
+Donde $\Sigma^*$ representa el conjunto de todas las palabras y $\{0, 1\}^n$ es el conjunto de cadenas binarias de $n$ bits.
+Entonces, dada una palabra cualquiera $w \in \Sigma^*$, podemos esperar que:
+
+$$P( f_h(w) = 0_1 0_2 ... 0_k 1 b_{k+2} b_{k+1} ... b_n ) = 1 / 2^k \text{ con } 0 \leq k \leq n$$
+
+\begin{itemize}
+\item Hay un $50\%$ de probabilidad de que $f_h(w) = 1 b_2 b_3 ... b_n$.
+\item Hay un $25\%$ de probabilidad de que $f_h(w) = 0 1 b_3 ... b_n$.
+\item Hay un $12.5\%$ de probabilidad de que $f_h(w) = 0 0 1 ... b_n$.
+\item [...]
+\end{itemize}
+
+\subsection{Descripción general del algoritmo}
+La idea principal de \texttt{HyperLogLog} gira en torno a la propiedad de uniformidad que presentan las buenas
+funciones de hash.
 
 	El $50\%$ del output sea de la forma 1X...X
 	
