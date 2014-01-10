@@ -3,3 +3,19 @@
 % 
 \section{Introducción}
 
+El \textbf{problema de la cardinalidad} consiste en determinar cuántos elementos únicos hay en un cúmulo de
+datos. Más formalmente, dado el \emph{multiconjunto} que contiene los datos $M$, si $M$ se interpreta como
+un conjunto $C_M$ entonces el problema consiste en calcular $|C_M|$.
+
+Este problema ha recibido mucha atención durante los dos últimas décadas, encontrando cada vez más
+aplicaciones en campos como \textbf{redes de computadores} (detección de ataques, propagación de virus...) o
+\textbf{bases de datos} (\emph{data mining}).
+
+En la mayoría de casos el multiconjunto $M$ contiene una cantidad de datos tan grande que no es
+posible mantener en memoria su totalidad. Esto hace muy difícil, e \textbf{ineficiente}, el cálculo de la
+cardinalidad de $C_M$ de manera exacta. Sin embargo, en muchas ocasiones no es necesario obtener el valor
+\textbf{exacto}, es decir, cierto \textbf{error} en el cálculo es admisible. En otras palabras, basta con dar una
+\textbf{estimación} de $|C_M|$.
+
+En este documento se investiga y se hace un análisis estadístico de un algoritmo destinado a estimar la
+cardinalidad de grandes cantidades de datos: \texttt{HyperLogLog}.
