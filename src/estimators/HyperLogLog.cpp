@@ -71,9 +71,6 @@ estimation_t HyperLogLog::estimation()
         return memory * log(((double) memory) / zeros);
     }
 
-    if(raw > 143165577)
-        return -4294967296 * log(1.0 - ((double)raw / 4294967296));
-
     return raw;
 }
 
