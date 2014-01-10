@@ -2,4 +2,114 @@
 % !TEX root = ../report.tex
 % 
 \section{Investigación}
-[...]
+
+La información referente al algoritmo \texttt{HyperLogLog} se ha obtenido principalmente
+del artículo \citetitle{hll:HyperLogLog} ~\cite{hll:HyperLogLog}.
+El artículo presenta una descripción detallada del algoritmo y sus ventajas en relación a otros
+algoritmos de estimación de cardinalidad.
+
+\subsection{Funciones de hash}
+
+La idea principal de \texttt{HyperLogLog} gira en torno a las funciones de hash.
+Una buena función de hash debe ser \textbf{uniforme}...
+
+\subsection{Descripción detallada del algoritmo}
+aprovecha la unformidad que proporcionan las funciones de hash. La idea básica del algoritmo es la
+siguiente:
+
+Entre las propiedades de las funciones de hash está el que los bits de la salida son independientes
+y cada uno tiene un 50$\%$ de posibilidades de ocurrir. Teniendo esto en cuenta, se puede esperar
+que:
+
+	El $50\%$ del output sea de la forma 1X...X
+	
+	El $25\%$ del output sea de la forma 01X...X
+	
+	El $12.5\%$ del output sea de la forma 001X...X
+	
+	...
+	
+Por lo que si, por ejemplo, se tienen 8 valores, se puede esperar que 1 sea de la forma 001X...X,
+si se tienen 4, 1 será de la forma 01X...X, etc. Y de aquí se salta a la inversa: si la primera
+posición (si se empieza a contar desde el primer bit) en la que aparece un 1 és el índice 2 (tomando
+el primer bit como índice 0), se puede esperar que haya 8 elementos, si el índice és 3 se puede
+esperar que haya 16 elementos y así sucesivamente.
+
+No obstante, éste resultado será, en el mejor de los casos, aproximado, y con un margen de error
+muy amplio, por lo que se tiene que optimizar para que sea viable. Para ello se usa una tabla en la
+que se guardan varias estimaciones, y en la que se usan los primeros bits del valor de hash para
+determinar el índice, y el resto de bits para calcular la estimación. Finalmente, una vez se tienen
+todas las estimaciones, se usa, y aquí es donde HyperLogLog se diferencia del algoritmo LogLog,
+la media armónica de todas ellas para obtener el valor aproximado final.
+
+\begin{algorithm}[h]
+\caption{\texttt{HyperLogLog} para funciones de hash de 32 bits}
+\textit{Let $h: D\rightarrow{0,1}^{32}$ hash data from D to binary 32-bit word.}
+
+\textit{Let $\rho(s)$ be the position of the leftmost 1-bit of s: e.g.,
+$\rho(1...) = 1, \rho(0001...) = 4, \rho(0^K) = K + 1$.}
+
+\textbf{define} $\alpha_{16}=0.673;\alpha_{32}=0.697;\alpha_{64}=0.709;\alpha_m=0.7213/(1+1.079/m)$
+for $m \geq 128;$
+
+\textbf{Program \texttt{HYPERLOGLOG}} (\textbf{input} $M$: multiset of items from domain $D$).
+
+\textbf{assume} $m=2^b$ with $ b\in[4..16]$.
+
+\textbf{initialize} a collection of $m$ registers, $M[1],...,M[m]$, to 0;
+
+\begin{algorithmic}
+    \FOR{$v\in M$}
+            \STATE $x  := h(v)$
+            \STATE $j   := 1 + (x_1 x_2 ... x_b)_2$ \COMMENT{binary address determined by the first b bits of x}
+            \STATE $w := x_{b+1} x_{b+2} ... $
+            \STATE $M[j] := max(M[j],\rho(w))$
+    \ENDFOR
+
+    \STATE $E:=\alpha _m m^2·\left(\sum\limits_{j=1}^m 2^{-M[j]}\right)^{-1}$ \COMMENT{the raw HyperLogLog estimate}
+    \IF{$E \leq \frac{5}{2}m$}
+        \STATE $V :=$ the number of registers equal to $0$
+        \STATE \algorithmicif\ $V \neq 0$ \algorithmicthen\ $E* := m \cdot log(m / V)$ \algorithmicelse\ $E* := E$
+        \COMMENT{small range correction}
+    \ENDIF
+    \IF{$E\leq \frac{1}{30}2^{32}$}
+        \STATE $E*:=E$ \COMMENT{intermediate range -- no correction}
+    \ELSE
+        \STATE $E* := -2^{32}log(1-E/2^{32})$ \COMMENT{large range correction}
+    \ENDIF
+    \RETURN{cardinality estimate E* with typical relative error $\pm$ 1.04/$\sqrt{m}$}
+\end{algorithmic}
+\end{algorithm}
+
+Finalmente, como ya se ha comentado, si se tiene una estimación (llamada $E$) con valores muy
+grandes o bien muy bajos, se lleva a cabo una corrección. Hay 3 casos:
+
+\begin{enumerate}
+\item Si $E < 5m/2$, se pueden haber dado casos en que haya posiciones vacías en la tabla que
+perviertan el valor de la estimación. En éste caso, se cuentan cuantas de estas posiciones vacías
+hay, y en caso de que haya por lo menos uno, se usa un nuevo valor (E*) para la estimación: 
+
+$$E* = m \cdot log(m/V)$$
+
+Siendo $V$ el número de posiciones vacías. Esta fórmula viene dada por las propiedades de las
+asignaciones aleatorias. Éstas indican que, dadas $m$ canastas, y $n$ lanzamientos de pelotas,
+se puede esperar que el número de canastas vacías sería $\mu$, con $\mu = n / m$. Por tanto, si
+observamos $V$ posiciones vacías sobre un total de $m$
+se puede esperar que $\mu$ sea cercano a $\log(m/V)$, por lo que $n$ estará cerca de
+$m \cdot log(m/v)$.
+
+\item Si $E > 2^{32}/30$, se producirán demasiadas colisiones en la función de hash que llegarían a
+afectar al resultado final. En éste caso se usa la siguiente $E*$ como sustituto de $E$:
+$$E* = -2^{32}log(1-E/2^{32})$$
+Para esta fórmula, se usa el mismo modelo de las canastas del punto anterior, pero se sustituye $m$
+por $2^L$, siendo $L$ el número de bits usados en la función de hash, normalmente 32 para $n
+\subset 1...10^9$. Es decir, $E$ estima el número de valores de hash diferente, que será, con una
+alta probabilidad, próximo a $2^L(1-e^{-k})$, siendo $k = n/2^L$. Por tanto, si aislamos n nos da
+que 
+$n=-2^Llog(1-E/2^L)$
+\\
+
+\item En el caso de que $E$ esté entre éstos dos valores, la estimación entra dentro de los valores
+“normales”, por lo que no hace falta modificarla.
+
+\end{enumerate}
