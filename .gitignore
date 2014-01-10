@@ -1,2 +1,22 @@
 test/
 dataset/
+
+# (Xe/Lua)LaTeX auxiliary files
+*.aux
+*.bcf
+*.toc
+*.synctex*
+*.lof
+*.log
+*.lol
+*.lot
+*.out
+*.run.xml
+report.pdf
+*.fls
+*.fdb_latexmk
+
+# *.bib # necessary if we want to add a bibliography. User-generated file!
+# Biber (bibliography) auxiliary files
+*.bbl
+*.blg
