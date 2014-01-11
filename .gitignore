@@ -12,6 +12,7 @@ dataset/
 *.lot
 *.out
 *.run.xml
+*.loa
 report.pdf
 *.fls
 *.fdb_latexmk

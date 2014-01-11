@@ -11,6 +11,7 @@ algoritmos de estimación de cardinalidad.
 En esta sección se introducen y se explican, de manera general, las bases del algoritmo \texttt{HyperLogLog}.
 
 \subsection{Funciones de hash}
+\label{hash}
 
 Una \textbf{función de hash} se define como una función que mapea todo elemento de un
 conjunto de tamaño arbitrario $A$ con otro elemento de un conjunto de tamaño finito $B$.
@@ -20,45 +21,74 @@ Una \textbf{buena} función de hash debe ser lo más \textbf{uniforme} posible, 
 $A$ tan \textbf{equitativamente} como sea posible sobre $B$. En otras palabras, todo elemento en $B$ debe ser generado
 por la función de hash con \textbf{aproximadamente la misma probabilidad}.
 
-Por lo tanto, si $f_h$ es una buena función de hash:
-$$f_h: \Sigma^* \rightarrow \{0,1\}^n$$
+Por lo tanto, si $h$ es una buena función de hash:
+$$h: \Sigma^* \rightarrow \{0,1\}^r$$
 
-Donde $\Sigma^*$ representa el conjunto de todas las palabras y $\{0, 1\}^n$ es el conjunto de cadenas binarias de $n$ bits.
-Entonces, dada una palabra cualquiera $w \in \Sigma^*$, podemos esperar que:
+Donde $\Sigma^*$ representa el conjunto de todas las palabras y $\{0, 1\}^r$ es el conjunto de cadenas binarias de $r$ bits.
+Entonces, dada una palabra cualquiera $w \in \Sigma^*$, se puede esperar que:
 
-$$P( f_h(w) = 0_1 0_2 ... 0_k 1 b_{k+2} b_{k+1} ... b_n ) = 1 / 2^k \text{ con } 0 \leq k \leq n$$
+\begin{align*}
+  \left.\begin{array}{r@{\mskip\thickmuskip}l}
+    p, a \in \{0, 1\} \\
+    p \neq a \\
+    1 \leq k \leq r
+  \end{array} \right\}
+  \quad \implies \quad
+  \left.
+    P\left( h(w) = p^{k-1} \: a \: b_{k+1} \: b_{k+2} \; ... \; b_r \right) = 2^{-k}
+  \right.
+\end{align*}
 
-\begin{itemize}
-\item Hay un $50\%$ de probabilidad de que $f_h(w) = 1 b_2 b_3 ... b_n$.
-\item Hay un $25\%$ de probabilidad de que $f_h(w) = 0 1 b_3 ... b_n$.
-\item Hay un $12.5\%$ de probabilidad de que $f_h(w) = 0 0 1 ... b_n$.
-\item [...]
-\end{itemize}
+Esto significa que la probabilidad de que la \textbf{primera ocurrencia} de $1$ o $0$ en $h(w)$ sea en el bit $k$ es $2^{-k}$.
+Es decir, hay un 50\% de probabilidades de que $h(w)$ empiece por 1, un 25\% de que empiece por $01$, un 12.5\% de que
+empiece por $001$, y así sucesivamente.
 
 \subsection{Descripción general del algoritmo}
-La idea principal de \texttt{HyperLogLog} gira en torno a la propiedad de uniformidad que presentan las buenas
+La idea principal de \texttt{HyperLogLog} gira en torno a la propiedad de \textbf{uniformidad} que presentan las buenas
 funciones de hash.
 
-	El $50\%$ del output sea de la forma 1X...X
-	
-	El $25\%$ del output sea de la forma 01X...X
-	
-	El $12.5\%$ del output sea de la forma 001X...X
-	
-	...
-	
-Por lo que si, por ejemplo, se tienen 8 valores, se puede esperar que 1 sea de la forma 001X...X,
-si se tienen 4, 1 será de la forma 01X...X, etc. Y de aquí se salta a la inversa: si la primera
-posición (si se empieza a contar desde el primer bit) en la que aparece un 1 és el índice 2 (tomando
-el primer bit como índice 0), se puede esperar que haya 8 elementos, si el índice és 3 se puede
-esperar que haya 16 elementos y así sucesivamente.
+Dada una buena función de hash $h$ (igual que en la sección \ref{hash}):
+$$h: \Sigma^* \rightarrow \{0,1\}^r$$
 
-No obstante, éste resultado será, en el mejor de los casos, aproximado, y con un margen de error
-muy amplio, por lo que se tiene que optimizar para que sea viable. Para ello se usa una tabla en la
-que se guardan varias estimaciones, y en la que se usan los primeros bits del valor de hash para
-determinar el índice, y el resto de bits para calcular la estimación. Finalmente, una vez se tienen
-todas las estimaciones, se usa, y aquí es donde HyperLogLog se diferencia del algoritmo LogLog,
-la media armónica de todas ellas para obtener el valor aproximado final.
+Y si el multiconjunto de entrada $M$ tiene $N$ elementos y $n$ elementos únicos, entonces puede esperarse que:
+
+\begin{align*}
+  \left.\begin{array}{r@{\mskip\thickmuskip}l}
+    p, a \in \{0, 1\} \\
+    p \neq a \\
+    N \geq 2 \\
+    k = \floor{log_2(N)}
+  \end{array} \right\}
+  \quad \implies \quad
+  \left.
+    \exists{w \in M}\!: h(w) = p^{k-1} \: a \: b_{k+1} \: b_{k+2} \: ... \: b_r
+  \right.
+\end{align*}
+
+Por ejemplo, si $M$ tiene \textbf{4 elementos} ($N = 4$) entonces se puede esperar que \textbf{exista uno tal que su hash
+empiece por 01}. Si $N = 8$ entonces uno debería empezar por 001, y así sucesivamente.
+
+Lo interesante, sin embargo, es \textbf{hacerlo a la inversa}.
+Sea $a \in \{0, 1\}$ y $k_{max}$ la posición \textbf{más tardía} en la que se ha observado
+una ocurrencia de $a$ para todo hash de todo elemento de $M$ entonces se puede estimar que $n$ es $E = 2^{k_{max}}$.
+Por ejemplo, si tras aplicar $h$ a todo elemento de $M$ se observa que la posición más tardía en la que se ha observado un
+$1$ es 3 (empieza por $\textbf{001}$), entonces se puede estimar que $n$ es $E = 2^3 = \textbf{8}$ \textbf{elementos}.
+
+Sin embargo, esta estimación es realmente \textbf{imprecisa}. No es difícil ver que con este estimador
+\textbf{la cardinalidad se reduce a simples potencias de 2}. Para eliminar esta imprecisión se usa una tabla $T$ de $m$ entradas
+para guardar diferentes $k_{max}$, obteniendo el índice $i$ a partir de los primeros $\floor{log_2(m)}$ bits del hash devuelto
+y $k_{candidato}$ con los restantes. A partir de $T$ es posible mejorar el estimador anterior:
+
+$$ E = 2 ^ { \frac{1}{m} \sum\limits_{i=0}^{m}\! T[i] } \cdot m $$
+
+Sin embargo, análisis estadístico realizado por \emph{Flajolet} ~\cite{hll:HyperLogLog} muestra que este estimador
+tiene cierta \textbf{tendencia a hacer estimaciones grandes}. Para corregirlo, la estimación se suele multiplicar por la
+\textbf{constante 0.79402}, encontrada de manera \textbf{experimental} por el mismo \emph{Flajolet}.
+Este estimador es el que utiliza el algoritmo \texttt{LogLog}, una versión anterior a \texttt{HyperLogLog}, y tiene
+\textbf{un error estándar} de  $\frac{1.30}{\sqrt{m}}$.
+
+\texttt{HyperLogLog} se diferencia del algoritmo \texttt{LogLog} en que aplica la \textbf{media armónica} en vez de la
+media aritmética, \textbf{reduciendo así el error estándar} hasta $\frac{1.04}{\sqrt{m}}$.
 
 \begin{algorithm}[h]
 \caption{\texttt{HyperLogLog} para funciones de hash de 32 bits}
@@ -125,7 +155,6 @@ por $2^L$, siendo $L$ el número de bits usados en la función de hash, normalme
 alta probabilidad, próximo a $2^L(1-e^{-k})$, siendo $k = n/2^L$. Por tanto, si aislamos n nos da
 que 
 $n=-2^Llog(1-E/2^L)$
-\\
 
 \item En el caso de que $E$ esté entre éstos dos valores, la estimación entra dentro de los valores
 “normales”, por lo que no hace falta modificarla.
