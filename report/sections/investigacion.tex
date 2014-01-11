@@ -44,6 +44,7 @@ Es decir, hay un 50\% de probabilidades de que $h(w)$ empiece por 1, un 25\% de 
 empiece por $001$, y así sucesivamente.
 
 \subsection{Descripción general del algoritmo}
+
 La idea principal de \texttt{HyperLogLog} gira en torno a la propiedad de \textbf{uniformidad} que presentan las buenas
 funciones de hash.
 
@@ -90,7 +91,32 @@ Este estimador es el que utiliza el algoritmo \texttt{LogLog}, una versión ante
 \texttt{HyperLogLog} se diferencia del algoritmo \texttt{LogLog} en que aplica la \textbf{media armónica} en vez de la
 media aritmética, \textbf{reduciendo así el error estándar} hasta $\frac{1.04}{\sqrt{m}}$.
 
-\begin{algorithm}[h]
+Por último, si la estimación resultante es muy alta o muy baja entonces se lleva a cabo una corrección:
+
+\begin{description}
+\item[Estimación baja] Si $E < \frac{5m}{2}$, se pueden haber dado casos en que haya \textbf{posiciones vacías en la tabla} que
+influyan en el valor de la estimación. En éste caso, se cuentan cuantas de estas posiciones vacías
+hay, y en caso de que haya por lo menos una, se usa un nuevo valor $E*$ para la estimación: 
+$$E* = m \cdot log\left(\frac{m}{V}\right)$$
+
+Siendo $V$ el número de posiciones vacías. Esta fórmula viene dada por las propiedades de las
+\textbf{asignaciones aleatorias}. Éstas indican que si $n$ pelotas son lanzadas aleatoriamente a $m$ canastas entonces
+se puede esperar que el número de canastas vacías sea $m \cdot e^{-\mu}$, donde $\mu = n / m$. Por tanto, si observamos
+$V$ posiciones vacías sobre un total de $m$ es de esperar que $\mu$ sea cercano a $\log(m/V)$, por lo que $n$ estará
+cerca de $m \cdot log(m/v)$.
+
+\item[Estimación alta] Asumiendo una función de hash de 32 bits. Si $E > \frac{2^{32}}{30}$, es de esperar que se hayan
+producido \textbf{muchas colisiones} que hayan afectado a la estimación final. La corrección consiste en usar la siguiente $E*$
+como sustituto de $E$:
+$$E* = -2^{32} \cdot log\left(1 - \frac{E}{2^{32}}\right)$$
+
+Para esta fórmula, se usa el mismo modelo de las canastas del punto anterior, pero se sustituye $m$
+por $2^r$, siendo $r$ el número de bits usados en la función de hash. Es decir, $E$ \textbf{estima el número de valores diferentes
+a los que se les ha aplicado la función de hash}, que será, con una alta probabilidad, próximo a $2^r \cdot (1 - e^{\frac{-n}{2^r}})$.
+Y si aislamos $n$ nos da que $n=-2^r \cdot log\left(1 - \frac{E}{2^r}\right)$.
+\end{description}
+
+\begin{algorithm}[h!]
 \caption{\texttt{HyperLogLog} para funciones de hash de 32 bits}
 \textit{Let $h: D\rightarrow \{0,1\}^{32}$ hash data from D to binary 32-bit word.}
 
@@ -128,29 +154,3 @@ for $m \geq 128;$
     \RETURN{cardinality estimate E* with typical relative error $\pm$ 1.04/$\sqrt{m}$}
 \end{algorithmic}
 \end{algorithm}
-
-Por último, si la estimación resultante es muy alta o muy baja entonces se lleva a cabo una corrección:
-
-\begin{description}
-\item[Estimación baja] Si $E < \frac{5m}{2}$, se pueden haber dado casos en que haya \textbf{posiciones vacías en la tabla} que
-influyan en el valor de la estimación. En éste caso, se cuentan cuantas de estas posiciones vacías
-hay, y en caso de que haya por lo menos una, se usa un nuevo valor $E*$ para la estimación: 
-$$E* = m \cdot log\left(\frac{m}{V}\right)$$
-
-Siendo $V$ el número de posiciones vacías. Esta fórmula viene dada por las propiedades de las
-\textbf{asignaciones aleatorias}. Éstas indican que si $n$ pelotas son lanzadas aleatoriamente a $m$ canastas entonces
-se puede esperar que el número de canastas vacías sea $m \cdot e^{-\mu}$, donde $\mu = n / m$. Por tanto, si observamos
-$V$ posiciones vacías sobre un total de $m$ es de esperar que $\mu$ sea cercano a $\log(m/V)$, por lo que $n$ estará
-cerca de $m \cdot log(m/v)$.
-
-\item[Estimación alta] Asumiendo una función de hash de 32 bits. Si $E > \frac{2^{32}}{30}$, es de esperar que se hayan
-producido \textbf{muchas colisiones} que hayan afectado a la estimación final. La corrección consiste en usar la siguiente $E*$
-como sustituto de $E$:
-$$E* = -2^{32} \cdot log\left(1 - \frac{E}{2^{32}}\right)$$
-
-Para esta fórmula, se usa el mismo modelo de las canastas del punto anterior, pero se sustituye $m$
-por $2^r$, siendo $r$ el número de bits usados en la función de hash. Es decir, $E$ \textbf{estima el número de valores diferentes
-a los que se les ha aplicado la función de hash}, que será, con una alta probabilidad, próximo a $2^r \cdot (1 - e^{\frac{-n}{2^r}})$.
-Y si aislamos $n$ nos da que $n=-2^r \cdot log\left(1 - \frac{E}{2^r}\right)$.
-
-\end{description}
