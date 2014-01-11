@@ -11,7 +11,7 @@ HyperLogLog::HyperLogLog(int m)
     msbits = floor(log2((double) m));
     lsbits = UniversalHash::BITS - msbits;
     memory = (1 << msbits);
-    table = vector<unsigned char>(memory, 0);
+    table = vector<uint8_t>(memory, 0);
     mask = (1 << lsbits) - 1;
     alpha = 0.7213 / (1.0 + 1.079 / memory);
     total_read = 0;
@@ -41,7 +41,7 @@ void HyperLogLog::read(const string &filename)
         h = hashing.hash(str);
         i = (h >> lsbits);
         w = h & mask;
-        table[i] = max((int)table[i], UniversalHash::leading_zeros(w) - msbits);
+        table[i] = max(table[i], (uint8_t)(UniversalHash::leading_zeros(w) - msbits));
 
         total_read++;
     }
@@ -59,7 +59,7 @@ estimation_t HyperLogLog::estimation()
     for(int i = 0; i < memory; ++i)
         sum += 1.0 / (1 << table[i]);
 
-    estimation_t raw = alpha * memory * memory * (1.0 / sum);
+    double raw = alpha * memory * memory * (1.0 / sum);
 
     if(raw < (2.5 * memory))
     {

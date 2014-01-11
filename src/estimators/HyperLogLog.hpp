@@ -10,7 +10,7 @@ using namespace std;
 class HyperLogLog : public CardinalityEstimator
 {
     UniversalHash hashing;
-    vector<unsigned char> table;
+    vector<uint8_t> table;
     int memory;
     int msbits;
     int lsbits;

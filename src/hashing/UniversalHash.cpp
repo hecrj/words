@@ -12,11 +12,10 @@ UniversalHash::UniversalHash()
 {
     rand(); // Throw first random value (not so random?)
 
-    uint64_t r30 = RAND_MAX*rand() + rand();
-    uint64_t s30 = RAND_MAX*rand() + rand();
-    int t4  = rand() & 0xf;
-
-    a = (r30 << 34) + (s30 << 4) + t4;
+    a = (((uint64_t) rand() <<  0) & 0x000000000000FFFF) |
+    (((uint64_t) rand() << 16) & 0x00000000FFFF0000) |
+    (((uint64_t) rand() << 32) & 0x0000FFFF00000000) |
+    (((uint64_t) rand() << 48) & 0xFFFF000000000000);
 
     #ifdef VERBOSE
         cout << "Hash bits:       " << BITS << endl; 
