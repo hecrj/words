@@ -2,4 +2,37 @@
 % !TEX root = ../report.tex
 % 
 \section{Análisis estadístico del algoritmo}
-[...]
+
+Para implementar el algoritmo hemos usado la función de hash llamada \texttt{djb2}, cuya performancia resulta excepcional cuando se usa en \textit{strings}. Esta función tiene la siguiente forma:
+
+\begin{algorithm}[h]
+\caption{\texttt{Función de hash \textbf{djb2}}
+
+\begin{algorithmic}
+	\STATE $unsigned long$
+	\STATE $hash(unsigned char *str)$
+	\STATE ${$
+		\STATE $unsigned long hash = 5381$
+		\STATE $int c;$
+		\WHILE{$c = *str++$}
+			\STATE $hash = hash * 33 + c$
+		\ENDWHILE
+		\STATE $return hash$
+	\STATE $}$
+\end{algorithmic}
+\end{algorithm}
+
+En nuestro caso le hemos añadido una modificación para garantizar que cada ejecución del programa la función dé unos resultados diferentes, permitiéndonos así obtener distintos valores de cardinalidad con los que hacer una media. Concretamente, hemos añadido una variable $a$ multiplicando el resultado de retorno de la función. Esta variable consiste en un número de 64 bits generado aleatoriamente en cada ejecución del programa.
+\\
+
+La función \texttt{djb2} sigue unos principios parecidos a los de un \texttt{Linear Congruental generator}  (\textit{LCG} para abreviar), que tiene la forma:
+$$X_{n+1} \equiv \left( a X_n + c \right)~~\pmod{m}$$
+usando $a=33$ y $M=2^{32}$. El valor elegido para $a$ es relativamente arbitrario, pero debe cumplir:
+
+\begin{enumerate}
+	\item $a-1$ es divisible por todos los factores primos de M. En el caso de $a=33$, $a-1$ es $32$, el cual es divisible por el único factor primo de $2^{32}$, el $2$.
+	\item a-1 es un múltiple de 4 si M también lo es. En el caso de $a=33$, como M es múltiplo de 4, $a-1$ también lo debe ser, y efectivamente, $32 \mod 4 = 0$.
+\end{enumerate}
+
+Un \textit{LCG} es un algoritmo que produce una secuencia de números \textit{pseudoaleatorios} calculados mediante una \textit{ecuación lineal}. Una de sus principales ventajas es que necesita un número muy reducido de bits para mantener el estado, por lo que es una buena elección en el entorno en el que lo usamos, en el que disponemos de poca memoria.
+
