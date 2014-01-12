@@ -8,6 +8,7 @@
 
 const int Djb2Hash::BITS = sizeof(hash_t) * 8;
 
+//La constructora de Djb2Hash inicializa la variable a
 Djb2Hash::Djb2Hash()
 {
     rand(); // Throw first random value (not so random?)
@@ -23,6 +24,8 @@ Djb2Hash::Djb2Hash()
     #endif
 }
 
+//Esta función es la función de hash propiamente dicha, y usa el método djb2
+//que ya se ha explicado en la documentacion para devolver la posición en la tabla
 hash_t Djb2Hash::hash(unsigned char *str)
 {
     hash_t hash = 5381;
@@ -34,6 +37,7 @@ hash_t Djb2Hash::hash(unsigned char *str)
     return a * hash;
 }
 
+//
 int Djb2Hash::leading_zeros(hash_t value)
 {
     // Be careful, magic code below!

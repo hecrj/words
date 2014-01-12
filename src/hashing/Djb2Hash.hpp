@@ -10,6 +10,8 @@ typedef uint64_t hash_t;
 
 class Djb2Hash
 {
+    //Esta variable es la semilla aleatoria que le proporcionamos para
+    //garantizar que cada ejecución dé un resultado distinto
     hash_t a;
 
     public:

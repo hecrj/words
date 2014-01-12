@@ -17,6 +17,9 @@ HyperLogLog::HyperLogLog(int m)
     total_read = 0;
 }
 
+/**
+* Lee y procesa la entrada, llenando la tabla
+*/
 void HyperLogLog::read(const string &filename)
 {
     unsigned char str[MAX_LENGTH];
@@ -52,6 +55,10 @@ void HyperLogLog::read(const string &filename)
     #endif
 }
 
+/**
+* Calcula la estimación una vez se ha procesado todo el conjunto de entrada,
+* aplicando la corrección en caso de que tenga un valor demasiado bajo
+*/
 estimation_t HyperLogLog::estimation()
 {
     double sum = 0;
@@ -74,11 +81,18 @@ estimation_t HyperLogLog::estimation()
     return raw;
 }
 
+/**
+* Devuelve el total de elementos procesados
+*/
 estimation_t HyperLogLog::total()
 {
     return total_read;
 }
 
+/**
+* Devuelve el número de elementos de la tabla vacíos, para ser usados en la corrección
+* de la estimación
+*/
 int HyperLogLog::count_zeros()
 {
     int zeros = 0;
