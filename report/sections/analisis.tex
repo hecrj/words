@@ -9,9 +9,9 @@
 En esta sección se estudia el comportamiento del algoritmo \texttt{HyperLogLog} en \textbf{9 \emph{datasets}} distintos limitando
 la cantidad de memoria utilizada a \textbf{1024 bytes}. En el apéndice \ref{graficas} se incluyen gráficas que muestran los resultados
 obtenidos para cada \emph{dataset} de forma detallada. Lo importante, sin embargo, es
-\textbf{observar los resultados obtenidos de manera general para cada muestra}.
+\textbf{observar los resultados obtenidos de manera general para cada muestra}, compuestas por 200 ejecucions del programa.
 
-Se presentan las tablas \ref{tabla:resumen_1024} y \ref{tabla:count_1024} a modo de resumen para cada \emph{dataset}.
+Se presentan las tablas \ref{tabla:count_1024} y \ref{tabla:resumen_1024} a modo de resumen para cada \emph{dataset}.
 \clearpage
 
 \begin{table}[h!]
@@ -43,14 +43,25 @@ Se presentan las tablas \ref{tabla:resumen_1024} y \ref{tabla:count_1024} a modo
     \label{tabla:count_1024}
 \end{table}
 
-[Aquí comentario sobre el SE cerca del valor esperado y otras cosas interesantes que puedas observar]
+Si se toma el \textbf{SE} de la tabla \ref{tabla:resumen_1024}, se puede observar que oscila alrededor del $3\%$, con picos de hasta el $3.6\%$ y un mínimo en $2.7\%$.
+
+Estos valores no parecen seguir ningún tipo de relación con \textbf{N}, más allá del hecho que el \emph{dataset} con la menor \textbf{N}, \textit{D1}, es el que tiene un \textbf{SE} menor. No obstante, el mayor \emph{dataset}, \textit{D8}, tiene un valor por debajo de la media, por lo que \textbf{N} no parece influir en el \textbf{SE}.
+\\
+
+Por su parte, los \textbf{tiempos medios} sí que tienen un relación, bastante obvia, con \textbf{N}: cuanto mayor sea \textbf{N} más tardará el programa. Siendo una relación tan lógica no se profundizará más.
+\\
+
+Los \textbf{tiempos por elemento}, al contrario, no siguen ningún tipo de relación aparente con \textbf{N}, por lo que deben estar influenciados por otros factores no tan evidentes.
+\\
+
+Finalmente, si se observa la tabla \ref{tabla:count_1024}, se observa que los valores de \textbf{SE} están concentrados, en todos los \emph{datasets}, en el intervalo $[0,1)$ y $[1,5)$, con tan solo 2 valores en total por encima del $5\%$. De esto se extrae que el programa no sólo tiene un \textbf{SE} medio próximo al $3\%$, si no que sus valores individuales también le son próximos. Este dato es muy positivo, ya que permite comprobar que el programa no precisa de muchas ejecuciones para dar una estimación precisa, ya que cada ejecución tiene un \textbf{SE} razonablemente bajo.
 
 \subsection{Influencia de la memoria disponible}
 
 \begin{table}[h!]
     \centering
     \begin{tabular}{l r r r S S S}
-    \strong{Memoria} & \strong{n} & \strong{N} & \strong{Est. media} &
+    \strong{Memoria (bytes)} & \strong{n} & \strong{N} & \strong{Est. media} &
     \strong{SE} & \textbf{T. medio ($ms$)} & \textbf{T. elem. ($\mu s$)}\\ \hline
 
 \textbf{32} & \input{../data/D1/summary_32.tex}
@@ -90,3 +101,8 @@ Se presentan las tablas \ref{tabla:resumen_1024} y \ref{tabla:count_1024} a modo
     \caption{Influencia de la memoria sobre el dataset D1. Clasificación de las ejecuciones según el error relativo (\%).}
     \label{tabla:resumen_1024}
 \end{table}
+\\
+
+Para estudiar el impacto de la \textbf{memoria disponible} en los resultados se ha usado el \emph{dataset} \textit{D1}, con valores de memoria que oscilan entre los $32 bytes$ y los $16 Kb$. En la tabla \ref{tabla:resumen_1024} se observa que en todos los casos la estimación es razonablemente precisa, siendo incluso tan precisa la estimación con $64 bytes$ como la que disponía de $4 Kb$. Esto podria llevar a la conclusión, errónea, de que el tamaño de la memoria es irrelevante para el resultado final. No obstante, si se comprueba el \textbf{SE} queda claro que cuanto mayor sea la memoria usada menor \textbf{SE} hay. Si se observa la tabla 4, en la que se muestran los intervalos en los que se encuentran los \textbf{SE} de cada muestra, se puede apreciar que los \textbf{SE} de las ejecuciones con memorias más reducidas se concentran en los valores superiores al $10\%$ de error. No es hasta que la \textbf{memoria disponible} aumenta hasta los 512 bytes que el \textbf{SE} se concentra por debajo del $10\%$, y solo a partir de los $4 Kb$ dejan de haber \textbf{SE} por encima del $5\%$. Por tanto, para obtener los mismos resultados que usando más memoria se deberían usar muchas más muestras, cosa que enlantecería el proceso, tal vez más de lo posible.
+
+En general se podría concluir que el mínimo de \textbf{memoria necesaria} es de unos $512 bytes$, ya que su \textbf{SE} es del $5\%$ aproximadamente, un valor aceptable en la mayoría de casos. Por otro lado, dependiendo de la importancia de la precisión, se puede aumentar o disminuir este valor.
