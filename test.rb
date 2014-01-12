@@ -91,6 +91,7 @@ end
 class Sample
   def initialize(dataset, memory)
     @dataset = dataset
+    @name = File.basename(@dataset, '.dat')
     @memory = memory
     @cases = []
 
@@ -134,11 +135,8 @@ class Sample
 
   # Guarda la muestra en el directorio dado
   def save(dir)
-    # Nombre del dataset
-    dataset_name = File.basename(@dataset, '.dat')
-
     # Ruta dataset
-    dataset_path = "#{dir}/#{dataset_name}/%s_#{@memory}.txt"
+    dataset_path = "#{dir}/#{@name}/%s_#{@memory}"
 
     # Rutas de archivos para el dataset
     sample_file  = dataset_path % 'sample'
@@ -147,48 +145,75 @@ class Sample
 
     # Se prepara el directorio que contendrá los resultados, a no ser que exista
     unless File.exists?("")
-      status "Creating directory #{dir}/#{dataset_name}", "mkdir -p #{dir}/#{dataset_name}"
+      status "Creating directory #{dir}/#{@name}", "mkdir -p #{dir}/#{@name}"
     end
 
+    save_sample sample_file 
+    save_summary summary_file
+    save_count count_file
+  end
+
+  def save_sample(sample_file)
     # Crear el fichero con la muestra
-    File.open(sample_file, 'w') do |file|
+    File.open("#{sample_file}.txt", 'w') do |file|
       file.puts Case.header
       file.puts *@cases
     end
 
-    say_status "Writing file #{sample_file}", :done
+    say_status "Writing file #{sample_file}.txt", :done
+  end
 
+  def save_summary(summary_file)
     # Crear el fichero con información general
-    File.open(summary_file, 'w') do |file|
-      header = row('real', 'total', 'avgTimeMs', 'timePerWordUs', 'avgEstimation', 'stdError')
-      body   = row(@real, @total, average(:time), time_per_word, average(:estimation), standard_error)
-      
-      file.puts header, body
+    header = [ 'real', 'total', 'avgEstimation', 'stdError', 'avgTimeMs', 'timePerWordUs' ]
+    body   = [ @real, @total, average(:estimation), standard_error, average(:time), time_per_word ]
+
+    File.open("#{summary_file}.txt", 'w') do |file|
+      file.puts row(*header), row(*body)
     end
 
-    say_status "Writing file #{summary_file}", :done
+    say_status "Writing file #{summary_file}.txt", :done
+
+    File.open("#{summary_file}.tex", 'w') do |file|
+      file.print body.join(' & ')
+      file.puts '\\\ \hline'
+    end
+
+    say_status "Writing file #{summary_file}.tex", :done
+  end
+
+  def save_count(count_file)
+    header = ['0to1', '1to5']
+    body = [ count_error_between(0, 0.01), count_error_between(0.01, 0.05) ]
+
+    3.times do |i|
+      start = (i+1)*5
+      fin   = start+5
+
+      header << "#{start}to#{fin}"
+      body   << count_error_between(start/100.0, fin/100.0)
+    end
+
+    header << '20to100'
+    body   << count_error_between(0.2, 1.0)
+
+    header << 'total'
+    body   << body.sum
 
     # Crear el fichero con recuento
-    File.open(count_file, 'w') do |file|
-      header = ['0to1', '1to5']
-      body = [ count_error_between(0, 0.01), count_error_between(0.01, 0.05) ]
-
-      8.times do |i|
-        start = (i+1)*5
-        fin   = start+5
-
-        header << "#{start}to#{fin}"
-        body   << count_error_between(start/100.0, fin/100.0)
-      end
-
-      header << 'total'
-      body   << body.sum
-
+    File.open("#{count_file}.txt", 'w') do |file|
       file.puts row(*header)
       file.puts row(*body)
     end
 
-    say_status "Writing file #{count_file}", :done
+    say_status "Writing file #{count_file}.txt", :done
+
+    File.open("#{count_file}.tex", 'w') do |file|
+      file.print body.first(body.size-1).join(' & ')
+      file.puts '\\\ \hline'
+    end
+
+    say_status "Writing file #{count_file}.tex", :done
   end
 
   def average(attribute)

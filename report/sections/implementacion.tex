@@ -1,0 +1,47 @@
+\section{Implementación}
+
+\subsection{Función de hash}
+Para implementar el algoritmo se ha usado una función de hash llamada \texttt{djb2} ~\cite{hash:djb2}.
+Se sabe que esta función de hash
+es \textbf{muy buena} cuando el \textbf{dominio} es el conjunto de todas las \textbf{cadenas de carácteres ASCII},
+hecho que ocurre precisamente en los \textbf{juegos de pruebas disponibles}.
+
+\begin{algorithm}[h]
+\caption{Función de hash djb2}
+\textbf{let} $a \in \{0, 1\}^{64}$ chosen randomly
+
+\textbf{input} $str \in \Sigma^*$
+
+\textbf{output} $hash \in \{0, 1\}^{64}$
+\begin{algorithmic}
+    \STATE $hash = 5381$
+    \STATE $i := 0$
+    \WHILE{$i < length(str)$}
+        \STATE $hash := hash * 33 + str[i]$
+        \STATE $i := i + 1$
+    \ENDWHILE
+    \RETURN $a \cdot hash$
+\end{algorithmic}
+\end{algorithm}
+
+La constante $a$ es un número 64 bits \textbf{escogido aleatoriamente para cada ejecución del programa}.
+Esto es necesario para poder realizar un \textbf{estudio estadístico del estimador de cardinalidad} y, además, se evita la posibilidad
+de tener juegos de pruebas generados intencionadamente para hacer fallar la estimación, es decir, \textbf{no hay casos peores}.
+
+\texttt{djb2} sigue unos principios parecidos a los de un \texttt{Linear Congruental generator}  (\emph{LCG} para abreviar),
+que tiene la forma:
+$$X_{n+1} \equiv \left( h \cdot X_n + c \right)~~\pmod{m}$$
+
+Donde $h=33$ y $m=2^{64}$. El valor elegido para $h$ es relativamente arbitrario, pero debe cumplir:
+
+\begin{itemize}
+	\item $\textbf{h-1}$ \textbf{es divisible por todos los factores primos de} $\textbf{m}$.
+En el caso de $h=33$, $h-1$ es $32$, divisible por el único factor primo de $2^{64}$, el $2$.
+
+	\item $\textbf{h-1}$ \textbf{es múltiplo de 4 si} $\textbf{m}$ \textbf{también lo es}.
+En el caso de $a=33$, como $m$ es múltiplo de 4, $h-1$ también lo debe ser, y efectivamente: $32 \! \mod 4 = 0$.
+\end{itemize}
+
+Un \emph{LCG} es un algoritmo que produce una secuencia de números \emph{pseudo-aleatorios} calculados mediante una
+\textbf{ecuación lineal}. Una de sus principales ventajas es que necesita un \textbf{número muy reducido de bits para mantener el
+estado}, por lo que es una buena elección en el entorno en el que se utiliza, donde se dispone de \textbf{poca memoria}.

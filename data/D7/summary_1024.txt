@@ -1,2 +1,2 @@
-real           total          avgTimeMs      timePerWordUs  avgEstimation  stdError       
-8995           157262         15.445         0.098          9016           0.033          
+real           total          avgEstimation  stdError       avgTimeMs      timePerWordUs  
+8995           157262         8973           0.034          14.543         0.092          

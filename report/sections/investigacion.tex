@@ -101,7 +101,7 @@ $$E* = m \cdot log\left(\frac{m}{V}\right)$$
 
 Siendo $V$ el número de posiciones vacías. Esta fórmula viene dada por las propiedades de las
 \textbf{asignaciones aleatorias}. Éstas indican que si $n$ pelotas son lanzadas aleatoriamente a $m$ canastas entonces
-se puede esperar que el número de canastas vacías sea $m \cdot e^{-\mu}$, donde $\mu = n / m$. Por tanto, si observamos
+se puede esperar que el número de canastas vacías sea $m \cdot e^{-\mu}$, donde $\mu = n / m$. Por tanto, si se observan
 $V$ posiciones vacías sobre un total de $m$ es de esperar que $\mu$ sea cercano a $\log(m/V)$, por lo que $n$ estará
 cerca de $m \cdot log(m/v)$.
 
@@ -113,7 +113,7 @@ $$E* = -2^{32} \cdot log\left(1 - \frac{E}{2^{32}}\right)$$
 Para esta fórmula, se usa el mismo modelo de las canastas del punto anterior, pero se sustituye $m$
 por $2^r$, siendo $r$ el número de bits usados en la función de hash. Es decir, $E$ \textbf{estima el número de valores diferentes
 a los que se les ha aplicado la función de hash}, que será, con una alta probabilidad, próximo a $2^r \cdot (1 - e^{\frac{-n}{2^r}})$.
-Y si aislamos $n$ nos da que $n=-2^r \cdot log\left(1 - \frac{E}{2^r}\right)$.
+Y aislando: $n=-2^r \cdot log\left(1 - \frac{E}{2^r}\right)$.
 \end{description}
 
 \begin{algorithm}[h!]

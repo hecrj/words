@@ -2,52 +2,91 @@
 % !TEX root = ../report.tex
 % 
 \section{Análisis estadístico del algoritmo}
+\label{analisis}
 
-\subsection{Versión implementada}
+\subsection{Memoria fijada a 1024 bytes}
 
-\subsubsection{Función de hash}
-Para implementar el algoritmo se ha usado una función de hash llamada \texttt{djb2} ~\cite{hash:djb2}.
-Se sabe que esta función de hash
-es \textbf{muy buena} cuando el \textbf{dominio} es el conjunto de todas las \textbf{cadenas de carácteres ASCII},
-hecho que ocurre precisamente en los \textbf{juegos de pruebas disponibles}.
+En esta sección se estudia el comportamiento del algoritmo \texttt{HyperLogLog} en \textbf{9 \emph{datasets}} distintos limitando
+la cantidad de memoria utilizada a \textbf{1024 bytes}. En el apéndice \ref{graficas} se incluyen gráficas que muestran los resultados
+obtenidos para cada \emph{dataset} de forma detallada. Lo importante, sin embargo, es
+\textbf{observar los resultados obtenidos de manera general para cada muestra}.
 
-\begin{algorithm}[h]
-\caption{Función de hash djb2}
-\textbf{let} $a \in \{0, 1\}^{64}$ chosen randomly
+Se presentan las tablas \ref{tabla:resumen_1024} y \ref{tabla:count_1024} a modo de resumen para cada \emph{dataset}.
+\clearpage
 
-\textbf{input} $str \in \Sigma^*$
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{l r r r S S S}
+    \strong{Dataset} & \strong{n} & \strong{N} & \strong{Est. media} &
+    \strong{SE} & \textbf{T. medio ($ms$)} & \textbf{T. elem. ($\mu s$)}\\ \hline
+    \newcounter{dataset}
+\forloop{dataset}{1}{\value{dataset} < 10}{
+\textbf{D\arabic{dataset}} &
+\input{../data/D\arabic{dataset}/summary_1024.tex}
+}
+\end{tabular}
+    \caption{Memoria fijada a 1024 bytes. Resumen de los resultados.}
+    \label{tabla:resumen_1024}
+\end{table}
 
-\textbf{output} $hash \in \{0, 1\}^{64}$
-\begin{algorithmic}
-    \STATE $hash = 5381$
-    \STATE $i := 0$
-    \WHILE{$i < length(str)$}
-        \STATE $hash := hash * 33 + str[i]$
-        \STATE $i := i + 1$
-    \ENDWHILE
-    \RETURN $a \cdot hash$
-\end{algorithmic}
-\end{algorithm}
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{l r r r r r r}
+    \strong{Dataset} & \strong{[0, 1)} & \strong{[1, 5)} & \strong{[5, 10)} &
+    \strong{[10, 15)} & \textbf{[15, 20)} & \textbf{[20, 100]} \\ \hline
+\forloop{dataset}{1}{\value{dataset} < 10}{
+\textbf{D\arabic{dataset}} &
+\input{../data/D\arabic{dataset}/count_1024.tex}
+}
+\end{tabular}
+    \caption{Memoria fijada a 1024 bytes. Clasificación de las ejecuciones según el error relativo (\%).}
+    \label{tabla:count_1024}
+\end{table}
 
-La constante $a$ es un número 64 bits \textbf{escogido aleatoriamente para cada ejecución del programa}.
-Esto es necesario para poder realizar un \textbf{estudio estadístico del estimador de cardinalidad} y, además, se evita la posibilidad
-de tener juegos de pruebas generados intencionadamente para hacer fallar la estimación, es decir, \textbf{no hay casos peores}.
+[Aquí comentario sobre el SE cerca del valor esperado y otras cosas interesantes que puedas observar]
 
-\texttt{djb2} sigue unos principios parecidos a los de un \texttt{Linear Congruental generator}  (\emph{LCG} para abreviar),
-que tiene la forma:
-$$X_{n+1} \equiv \left( h \cdot X_n + c \right)~~\pmod{m}$$
+\subsection{Influencia de la memoria disponible}
 
-Donde $h=33$ y $m=2^{64}$. El valor elegido para $h$ es relativamente arbitrario, pero debe cumplir:
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{l r r r S S S}
+    \strong{Memoria} & \strong{n} & \strong{N} & \strong{Est. media} &
+    \strong{SE} & \textbf{T. medio ($ms$)} & \textbf{T. elem. ($\mu s$)}\\ \hline
 
-\begin{itemize}
-	\item $\textbf{h-1}$ \textbf{es divisible por todos los factores primos de} $\textbf{m}$.
-En el caso de $h=33$, $h-1$ es $32$, divisible por el único factor primo de $2^{64}$, el $2$.
+\textbf{32} & \input{../data/D1/summary_32.tex}
+\textbf{64} & \input{../data/D1/summary_64.tex}
+\textbf{128} & \input{../data/D1/summary_128.tex}
+\textbf{256} & \input{../data/D1/summary_256.tex}
+\textbf{512} & \input{../data/D1/summary_512.tex}
+\textbf{1024} & \input{../data/D1/summary_1024.tex}
+\textbf{2048} & \input{../data/D1/summary_2048.tex}
+\textbf{4096} & \input{../data/D1/summary_4096.tex}
+\textbf{8192} & \input{../data/D1/summary_8192.tex}
+\textbf{16384} & \input{../data/D1/summary_16384.tex}
 
-	\item $\textbf{h-1}$ \textbf{es múltiplo de 4 si} $\textbf{m}$ \textbf{también lo es}.
-En el caso de $a=33$, como $m$ es múltiplo de 4, $h-1$ también lo debe ser, y efectivamente: $32 \! \mod 4 = 0$.
-\end{itemize}
+\end{tabular}
+    \caption{Influencia de la memoria sobre el dataset D1. Resumen de resultados.}
+    \label{tabla:resumen_1024}
+\end{table}
 
-Un \emph{LCG} es un algoritmo que produce una secuencia de números \emph{pseudo-aleatorios} calculados mediante una
-\textbf{ecuación lineal}. Una de sus principales ventajas es que necesita un \textbf{número muy reducido de bits para mantener el
-estado}, por lo que es una buena elección en el entorno en el que se utiliza, donde se dispone de \textbf{poca memoria}.
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{l r r r r r r}
+    \strong{Memoria} & \strong{[0, 1)} & \strong{[1, 5)} & \strong{[5, 10)} &
+    \strong{[10, 15)} & \textbf{[15, 20)} & \textbf{[20, 100]} \\ \hline
 
+\textbf{32} & \input{../data/D1/count_32.tex}
+\textbf{64} & \input{../data/D1/count_64.tex}
+\textbf{128} & \input{../data/D1/count_128.tex}
+\textbf{256} & \input{../data/D1/count_256.tex}
+\textbf{512} & \input{../data/D1/count_512.tex}
+\textbf{1024} & \input{../data/D1/count_1024.tex}
+\textbf{2048} & \input{../data/D1/count_2048.tex}
+\textbf{4096} & \input{../data/D1/count_4096.tex}
+\textbf{8192} & \input{../data/D1/count_8192.tex}
+\textbf{16384} & \input{../data/D1/count_16384.tex}
+
+\end{tabular}
+    \caption{Influencia de la memoria sobre el dataset D1. Clasificación de las ejecuciones según el error relativo (\%).}
+    \label{tabla:resumen_1024}
+\end{table}
