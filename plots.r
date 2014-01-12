@@ -4,13 +4,18 @@ setwd("/home/hector/Projects/words")
 figures_dir = "figs"
 data_dir = "data"
 
+#Esta funcion devuelve una direccion completa al directorio que especificamos
+#con los parametros de la funcion
 getPath <- function(dir, dataset, memory, name, extension)
 {
   return(paste(dir, "/", dataset, "/", name, "_", memory, ".", extension, sep=""))
 }
 
+#Esta funcion devuelve una direccion completa al directorio que especificamos
+#con los parametros de la funcion
 getDataPath <- function(dataset, memory, name) getPath(data_dir, dataset, memory, name, "txt")
 
+#Esta funcion devuelve los datos del dataset indicado para poder trabajar con ellos
 getData <- function(dataset, memory)
 {
   data = new.env()
@@ -22,6 +27,7 @@ getData <- function(dataset, memory)
   return(data)
 }
 
+#Esta funcion devuelve el error relativo del dataset indicado
 getRel <- function(dataset, memories, column)
 {
   rel = c()
@@ -34,6 +40,7 @@ getRel <- function(dataset, memories, column)
   return(rel)
 }
 
+#Esta funcion saca la grafica con las estimaciones del dataset indicado
 plotEstimation <- function(dataset, memory)
 {
   data = getData(dataset, memory)
@@ -54,6 +61,7 @@ plotEstimation <- function(dataset, memory)
   dev.off()
 }
 
+#Esta funcion saca la grafica con los errores relativos del dataset indicado
 plotErrors <- function(dataset, memory)
 {
   data = getData(dataset, memory)
@@ -72,6 +80,7 @@ plotErrors <- function(dataset, memory)
   dev.off()
 }
 
+#Esta funcion saca la grafica con los elementos que contiene el dataset indicado
 plotCount <- function(dataset, memory)
 {
   data = getData(dataset, memory)
@@ -87,6 +96,7 @@ plotCount <- function(dataset, memory)
   dev.off()
 }
 
+#Esta funcion saca la grafica con los tiempos de ejecucion del dataset indicado
 plotTime <- function(dataset, memory)
 {
   data = getData(dataset, memory)
@@ -105,6 +115,7 @@ plotTime <- function(dataset, memory)
   dev.off()
 }
 
+#Esta funcion saca la grafica con los la estimacion media del dataset indicado en funcion de la memoria
 memEstimation <- function(dataset, memories)
 {
   real = getData(dataset, 2^memories[1])$summary$real
@@ -125,6 +136,7 @@ memEstimation <- function(dataset, memories)
   dev.off()
 }
 
+#Esta funcion saca la grafica con el error medio del dataset indicado en funcion de la memoria
 memErrors <- function(dataset, memories)
 {
   errors = getRel(dataset, memories, "stdError")
@@ -144,6 +156,7 @@ memErrors <- function(dataset, memories)
   dev.off()
 }
 
+#Esta funcion saca la grafica con el tiempo medio de ejecucion del dataset indicado en funcion de la memoria
 memTime <- function(dataset, memories)
 {
   times = getRel(dataset, memories, "avgTimeMs")
