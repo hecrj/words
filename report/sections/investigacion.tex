@@ -68,13 +68,13 @@ Y si el multiconjunto de entrada $M$ tiene $N$ elementos y $n$ elementos únicos
 \end{align*}
 
 Por ejemplo, si $M$ tiene \textbf{4 elementos} ($N = 4$) entonces se puede esperar que \textbf{exista uno tal que su hash
-empiece por 01}. Si $N = 8$ entonces un elemento debería empezar por 001, y así sucesivamente.
+empiece por 01}. Si $N = 8$ entonces un elemento debería empezar con la secuencia 001, y así sucesivamente.
 
 Lo interesante, sin embargo, es \textbf{hacerlo a la inversa}.
 Sea $a \in \{0, 1\}$ y $k_{max}$ la posición \textbf{más tardía} en la que se ha observado
 una ocurrencia de $a$ para todo hash de todo elemento de $M$ entonces se puede estimar que la cardinalidad $n$ de $M$ sea $E = 2^{k_{max}}$.
 Por ejemplo, si tras aplicar $h$ a todo elemento de $M$ se observa que la posición más tardía en la que se ha observado un
-$1$ es 3 (empieza por $\textbf{001}$), entonces se puede estimar que $n$ es $E = 2^3 = \textbf{8}$ \textbf{elementos}.
+$1$ es 3 (el elemento empieza con la secuencia $\textbf{001}$), entonces se puede estimar que $n$ es $E = 2^3 = \textbf{8}$ \textbf{elementos}.
 
 Sin embargo, esta estimación es realmente \textbf{imprecisa}. No es difícil ver que con este estimador
 \textbf{la cardinalidad se reduce a simples potencias de 2}. Para eliminar esta imprecisión se usa una tabla $T$ de $m$ entradas
