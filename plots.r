@@ -22,6 +22,18 @@ getData <- function(dataset, memory)
   return(data)
 }
 
+getRel <- function(dataset, memories, column)
+{
+  rel = c()
+  
+  for(i in 1:length(memories))
+  {
+    rel[i] <- getData(dataset, 2^memories[i])[["summary"]][[column]]
+  }
+  
+  return(rel)
+}
+
 plotEstimation <- function(dataset, memory)
 {
   data = getData(dataset, memory)
@@ -30,7 +42,7 @@ plotEstimation <- function(dataset, memory)
   pdf(getPath(figures_dir, dataset, memory, "plot_estimation", "pdf"))
   layout(rbind(1, 2), heights=c(15,1))
   
-  plot(data$sample$est, col="red", pch=20, xlab="Ejecución", ylab="Estimación")
+  plot(data$sample$est, col="red", pch=20, xlab="Ejecución", ylab="Estimación", ylim=c(0, max(data$sample$est, data$summary$real, data$summary$avgEstimation)))
   title(main=paste("Estimaciones de ", dataset, ".dat con ", memory, " bytes", sep=""))
   abline(h = data$summary$real, col="green")
   abline(h = data$summary$avgEstimation, col="blue")
@@ -49,13 +61,13 @@ plotErrors <- function(dataset, memory)
   pdf(getPath(figures_dir, dataset, memory, "plot_errors", "pdf"))
   layout(rbind(1,2), heights=c(15,1))
   
-  plot(data$sample$relError, col="red", pch=20, xlab="Ejecución", ylab="Error relativo")
+  plot(data$sample$relError, col="red", pch=20, xlab="Ejecución", ylab="Error relativo", ylim=c(0, max(data$sample$relError, data$summary$stdError)))
   title(main=paste("Errores relativos de ", dataset, ".dat con ", memory, " bytes", sep=""))
   abline(h = data$summary$stdError, col="blue")
   
   par(mar=c(0, 0, 0, 0))
   plot.new()
-  legend("center", "groups", c("Error estándar"), col=c("blue"), lty = c(1), bty="n")
+  legend("center", c("Error estándar"), col=c("blue"), lty = c(1), bty="n")
   
   dev.off()
 }
@@ -82,29 +94,86 @@ plotTime <- function(dataset, memory)
   pdf(getPath(figures_dir, dataset, memory, "plot_time", "pdf"))
   layout(rbind(1,2), heights=c(15,1))
   
-  plot(data$sample$timeMs, col="red", pch=20, xlab="Ejecución", ylab="Tiempo (ms)")
+  plot(data$sample$timeMs, col="red", pch=20, xlab="Ejecución", ylab="Tiempo (ms)", ylim=c(0, max(data$sample$timeMs, data$summary$avgTimeMs)))
   title(main=paste("Tiempos de ejecución en ", dataset, ".dat con ", memory, " bytes", sep=""))
   abline(h = data$summary$avgTimeMs, col="blue")
   
   par(mar=c(0, 0, 0, 0))
   plot.new()
-  legend("center", "groups", c("Tiempo medio (ms)"), col=c("blue"), lty = c(1), bty="n")
+  legend("center", c("Tiempo medio (ms)"), col=c("blue"), lty = c(1), bty="n")
+  
+  dev.off()
+}
+
+memEstimation <- function(dataset, memories)
+{
+  real = getData(dataset, 2^memories[1])$summary$real
+  estimations = getRel(dataset, memories, "avgEstimation")
+  
+  pdf(getPath(figures_dir, dataset, "rel", "mem_estimation", "pdf"))
+  layout(rbind(1, 2), heights=c(15,1))
+  
+  plot(memories, estimations, col="red", pch=20, xlab="log2(Memoria)", ylab="Estimación media", xaxt="n", ylim=c(0, max(estimations)))
+  axis(side=1, at=memories, cex.axis=1)
+  title(main="Influencia de la memoria sobre la estimación media")
+  abline(h = real, col="green")
+  
+  par(mar=c(0, 0, 0, 0))
+  plot.new()
+  legend("center", c("Valor real"), col=c("green"), lty=c(1), bty="n")
+  
+  dev.off()
+}
+
+memErrors <- function(dataset, memories)
+{
+  errors = getRel(dataset, memories, "stdError")
+  
+  pdf(getPath(figures_dir, dataset, "rel", "mem_errors", "pdf"))
+  layout(rbind(1, 2), heights=c(15,1))
+  
+  plot(memories, errors, col="red", pch=20, xlab="log2(Memoria)", ylab="Error estándar", xaxt="n", ylim=c(0, max(errors)))
+  curve(1.04 / sqrt(2^x), from=memories[1], to=memories[length(memories)], add=T, lty=2, col="blue")
+  axis(side=1, at=memories, cex.axis=1)
+  title(main="Influencia de la memoria sobre el error estándar")
+  
+  par(mar=c(0, 0, 0, 0))
+  plot.new()
+  legend("center", c("1.04 / sqrt(2^x)"), col=c("blue"), lty=c(2), bty="n")
+  
+  dev.off()
+}
+
+memTime <- function(dataset, memories)
+{
+  times = getRel(dataset, memories, "avgTimeMs")
+  
+  pdf(getPath(figures_dir, dataset, "rel", "mem_time", "pdf"))
+  layout(rbind(1, 1))
+  
+  plot(memories, times, col="red", pch=20, xlab="log2(Memoria)", ylab="Tiempo medio (ms)", xaxt="n", ylim=c(0, max(times)))
+  axis(side=1, at=memories, cex.axis=1)
+  title(main="Influencia de la memoria sobre el tiempo medio")
   
   dev.off()
 }
 
 datasets = list.dirs(data_dir)
-memories = c(1024)
+memory = 1024
 
 for(i in 2:length(datasets))
 {
-  for(j in 1:length(memories))
-  {
     dataset = gsub(paste(data_dir, "/", sep=""), "", datasets[i])
     
-    plotEstimation(dataset, memories[j])
-    plotErrors(dataset, memories[j])
-    plotCount(dataset, memories[j])
-    plotTime(dataset, memories[j])
-  }
+    plotEstimation(dataset, memory)
+    plotErrors(dataset, memory)
+    plotCount(dataset, memory)
+    plotTime(dataset, memory)
 }
+
+memories = c(5:14)
+
+memEstimation("D1", memories)
+memErrors("D1", memories)
+memTime("D1", memories)
+

@@ -1,5 +1,6 @@
 test/
 dataset/
+*~
 
 # (Xe/Lua)LaTeX auxiliary files
 *.aux

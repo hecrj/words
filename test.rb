@@ -40,7 +40,7 @@ def status(message, cmd)
   $stdout.flush
 
   # Ejecuta el comando y guarda su salida en result
-  result = `#{cmd}`
+  result = `#{cmd} 2> /dev/null`
 
   # $?.exitstatus tiene el valor de salida del último comando ejecutado
   print "\r"
@@ -271,3 +271,12 @@ Dir["dataset/#{datasets}.dat"].sort!.each do |dataset|
 
   puts separator
 end
+
+# Preguntar si se desean generar las gráficas a partir de los nuevos resultados
+if File.exists?(dir)
+  puts "Generate plots? This may overwrite files found in figs..."
+  print "Are you sure? [y/n] "
+  exit(0) unless $stdin.gets.chomp == "y"
+end
+
+status "Plotting", "Rscript plots.r"

@@ -1,6 +1,11 @@
+% !TEX encoding = UTF-8 Unicode
+% !TEX root = ../report.tex
+% 
 \section{Implementación}
 
 \subsection{Función de hash}
+\label{implementacion:hash}
+
 Para implementar el algoritmo se ha usado una función de hash llamada \texttt{djb2} ~\cite{hash:djb2}.
 Se sabe que esta función de hash
 es \textbf{muy buena} cuando el \textbf{dominio} es el conjunto de todas las \textbf{cadenas de carácteres ASCII},
@@ -24,11 +29,13 @@ hecho que ocurre precisamente en los \textbf{juegos de pruebas disponibles}.
 \end{algorithmic}
 \end{algorithm}
 
-La constante $a$ es un número 64 bits \textbf{escogido aleatoriamente para cada ejecución del programa}.
+El \textbf{coste temporal} de aplicar esta función de hash a una cadena de cáracteres $str$ es $\bigO{length(str)}$.
+
+La constante $a$ es un número de 64 bits \textbf{escogido aleatoriamente para cada ejecución del programa}.
 Esto es necesario para poder realizar un \textbf{estudio estadístico del estimador de cardinalidad} y, además, se evita la posibilidad
 de tener juegos de pruebas generados intencionadamente para hacer fallar la estimación, es decir, \textbf{no hay casos peores}.
 
-\texttt{djb2} sigue unos principios parecidos a los de un \texttt{Linear Congruental generator}  (\emph{LCG} para abreviar),
+\texttt{djb2} sigue unos principios parecidos a los de un \texttt{Linear Congruental Generator}  (\emph{LCG} para abreviar),
 que tiene la forma:
 $$X_{n+1} \equiv \left( h \cdot X_n + c \right)~~\pmod{m}$$
 
@@ -45,3 +52,53 @@ En el caso de $a=33$, como $m$ es múltiplo de 4, $h-1$ también lo debe ser, y 
 Un \emph{LCG} es un algoritmo que produce una secuencia de números \emph{pseudo-aleatorios} calculados mediante una
 \textbf{ecuación lineal}. Una de sus principales ventajas es que necesita un \textbf{número muy reducido de bits para mantener el
 estado}, por lo que es una buena elección en el entorno en el que se utiliza, donde se dispone de \textbf{poca memoria}.
+
+\subsection{Algoritmo \texttt{HyperLogLog}}
+\label{implementacion:algoritmo}
+
+Dado que se ha decidido utilizar una función de hash de 64 bits para minimizar el número de colisiones, resulta innecesario aplicar la
+corrección para estimaciones altas vista en la sección: \nameref{investigacion:descripcion} (\ref{investigacion:descripcion}). Esto es así
+porque, en la práctica, observar estimaciones cercanas a $2^{64}$ es poco común y, en esos casos, quizás sería mejor utilizar más bits
+en la función de hash antes que aplicar la corrección.
+
+El algoritmo \ref{algoritmo:hyper2} muestra en pseudocódigo la versión final que se ha implementado en \texttt{C++} y sobre la que
+se ha realizado el análisis estadístico de la sección \ref{analisis}.
+
+\begin{algorithm}[h!]
+\caption{\texttt{HyperLogLog} para funciones de hash de 64 bits}
+\label{algoritmo:hyper2}
+\textit{Let $h: D\rightarrow \{0,1\}^{64}$ hash data from D to binary 32-bit word.}
+
+\textit{Let $\rho(s)$ be the position of the leftmost 1-bit of s: e.g.,
+$\rho(1...) = 1, \rho(0001...) = 4, \rho(0^K) = K + 1$.}
+
+\textbf{define} $\alpha_{16}=0.673;\alpha_{32}=0.697;\alpha_{64}=0.709;\alpha_m=0.7213/(1+1.079/m)$
+for $m \geq 128;$
+
+\textbf{Program \texttt{HYPERLOGLOG}} (\textbf{input} $M$: multiset of items from domain $D$).
+
+\textbf{assume} $m=2^b$ with $ b\in[4..16]$.
+
+\textbf{initialize} a collection of $m$ registers, $M[1],...,M[m]$, to 0;
+
+\begin{algorithmic}
+    \FOR{$v\in M$}
+            \STATE $x  := h(v)$
+            \STATE $j   := 1 + (x_1 x_2 ... x_b)_2$ \COMMENT{binary address determined by the first b bits of x}
+            \STATE $w := x_{b+1} x_{b+2} ... $
+            \STATE $M[j] := max(M[j],\rho(w))$
+    \ENDFOR
+
+    \STATE $E:=\alpha _m m^2·\left(\sum\limits_{j=1}^m 2^{-M[j]}\right)^{-1}$ \COMMENT{the raw HyperLogLog estimate}
+    \IF{$E \leq \frac{5}{2}m$}
+        \STATE $V :=$ the number of registers equal to $0$
+        \STATE \algorithmicif\ $V \neq 0$ \algorithmicthen\ $E* := m \cdot log(m / V)$ \algorithmicelse\ $E* := E$
+        \COMMENT{small range correction}
+    \ELSE
+        \STATE $E*:=E$
+    \ENDIF
+    \RETURN{cardinality estimate E* with typical relative error $\pm$ 1.04/$\sqrt{m}$}
+\end{algorithmic}
+\end{algorithm}
+
+\newpage

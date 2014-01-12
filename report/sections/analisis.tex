@@ -4,15 +4,41 @@
 \section{Análisis estadístico del algoritmo}
 \label{analisis}
 
+\subsection{Obtención de las muestras}
+Para la \textbf{obtención de las muestras} necesarias para el \textbf{análisis estadístico} del algoritmo \texttt{HyperLogLog}
+se ha utilizando un script programado en \textbf{Ruby}. Puede verse el código en el apéndice ...
+
+El script recibe como parámetros:
+\begin{enumerate}
+\item Los datasets de los que se quieren recoger muestras (por defecto \textbf{todos})
+\item Los casos por muestra (por defecto \textbf{200})
+\item Las memorias de las que recoger datas (por defecto \textbf{1024})
+\item El directorio donde guardar resultados (por defecto \textbf{data})
+\end{enumerate}
+
+El script \textbf{compila y ejecuta el código en \texttt{C++} que implementa el algoritmo \texttt{HyperLogLog} para recoger los datos
+y crea archivos con los resultados de cada muestra}, en forma de tabla. Finalmente, pregunta si se desean
+\textbf{generar gráficas} a partir de los resultados obtenidos y, si se responde positivamente, ejecuta un \textbf{script en R que las genera autómaticamente} (disponible en el apéndice ...).
+
+Para el primer análisis: \textbf{\nameref{analisis:mem_1024}}, las muestras se han obtenido utilizando los parámetros por defecto del script.
+
+Para el segundo análisis: \textbf{\nameref{analisis:D1_mem}}, las muestras se han obtenido utilizando los parámetros:
+\begin{description}
+\item[Dataset] D1
+\item[Memorias] 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384
+\end{description}
+
+Y los otros parámetros con su valor por defecto.
+
 \subsection{Memoria fijada a 1024 bytes}
+\label{analisis:mem_1024}
 
 En esta sección se estudia el comportamiento del algoritmo \texttt{HyperLogLog} en \textbf{9 \emph{datasets}} distintos limitando
 la cantidad de memoria utilizada a \textbf{1024 bytes}. En el apéndice \ref{graficas} se incluyen gráficas que muestran los resultados
 obtenidos para cada \emph{dataset} de forma detallada. Lo importante, sin embargo, es
-\textbf{observar los resultados obtenidos de manera general para cada muestra}, compuestas por 200 ejecucions del programa.
+\textbf{observar los resultados obtenidos de manera general para cada muestra}.
 
 Se presentan las tablas \ref{tabla:count_1024} y \ref{tabla:resumen_1024} a modo de resumen para cada \emph{dataset}.
-\clearpage
 
 \begin{table}[h!]
     \centering
@@ -43,21 +69,63 @@ Se presentan las tablas \ref{tabla:count_1024} y \ref{tabla:resumen_1024} a modo
     \label{tabla:count_1024}
 \end{table}
 
-Si se toma el \textbf{SE} de la tabla \ref{tabla:resumen_1024}, se puede observar que oscila alrededor del $3\%$, con picos de hasta el $3.6\%$ y un mínimo en $2.7\%$.
+Si se toma el \textbf{SE} de la tabla \ref{tabla:resumen_1024}, se puede observar que \textbf{no parece verse afectado por el \emph{dataset} utilizado}, puesto que en todos ellos oscila alrededor del $3\%$.
 
-Estos valores no parecen seguir ningún tipo de relación con \textbf{N}, más allá del hecho que el \emph{dataset} con la menor \textbf{N}, \textit{D1}, es el que tiene un \textbf{SE} menor. No obstante, el mayor \emph{dataset}, \textit{D8}, tiene un valor por debajo de la media, por lo que \textbf{N} no parece influir en el \textbf{SE}.
+Por su parte, los \textbf{tiempos medios} sí que tienen un relación bastante obvia con \textbf{N}
+\textbf{cuanto mayor sea \textbf{N} más tardará el programa}. Esto es de esperar, puesto que el coste de un algoritmo suele
+depender directamente de la entrada que recibe.
 
-Por su parte, los \textbf{tiempos medios} sí que tienen un relación, bastante obvia, con \textbf{N}: cuanto mayor sea \textbf{N} más tardará el programa. Siendo una relación tan lógica no se profundizará más.
-
-Los \textbf{tiempos por elemento}, al contrario, no siguen ningún tipo de relación aparente con \textbf{N}, por lo que deben estar influenciados por otros factores no tan evidentes.
+\textbf{Los tiempos por elemento varían considerablemente dependiendo del dataset}. Esto también es de esperar, puesto que
+un dataset puede contener, en media, más elementos de \textbf{una longitud mayor} respecto a otro y, por lo tanto,
+\textbf{aplicar la función de hash djb2 (sección \ref{implementacion:hash}) tendrá un coste mayor}.
 
 Finalmente, en la tabla \ref{tabla:count_1024} se observa que los valores de \textbf{los errores relativos} están
-concentrados, en todos los \emph{datasets}, en el intervalo $[0,10)$, con tan solo 2 valores en total por encima del $10\%$.
-Este dato es muy positivo, ya que permite comprobar que el programa no precisa de muchas ejecuciones para dar una
+concentrados, en todos los \emph{datasets}, en el intervalo $[0,5)$, con muy pocos valores en total por encima del $5\%$.
+Este dato es muy positivo porque demuestra que el programa no precisa de muchas ejecuciones para dar una
 estimación precisa, ya que cada ejecución tiene un \textbf{error relativo} razonablemente bajo. Por otro lado, este dato también
-nos muestra que la precisión del algoritmo no depende del multiconjunto de datos de entrada o \emph{dataset}.
+nos muestra que \textbf{la precisión del algoritmo para una ejecución en concreto no depende del \emph{dataset}}.
 
 \subsection{Influencia de la memoria disponible}
+\label{analisis:D1_mem}
+
+Para estudiar el impacto de la \textbf{memoria disponible} en los resultados se ha usado el \textbf{\emph{dataset} D1},
+con valores de memoria $m \in \{ 2^x \: | \; 5 \leq x \leq 14 \}$.
+
+Se presentan las figuras \ref{figura:mem_estimation}, \ref{figura:mem_errors} y \ref{figura:mem_time} donde se puede observar la
+\textbf{influencia de la memoria} sobre la \textbf{estimación media}, el \textbf{error estándar} y el \textbf{tiempo medio},
+respectivamente.
+
+\begin{figure}[h!]
+    \centering
+        \includegraphics[width=0.64\textwidth]{../figs/D1/mem_estimation_rel.pdf}
+        \caption{Influencia de la memoria disponible sobre la estimación media}
+    \label{figura:mem_estimation}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+        \includegraphics[width=0.64\textwidth]{../figs/D1/mem_errors_rel.pdf}
+        \caption{Influencia de la memoria disponible sobre el error estándar}
+    \label{figura:mem_errors}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+        \includegraphics[width=0.64\textwidth]{../figs/D1/mem_time_rel.pdf}
+        \caption{Influencia de la memoria disponible sobre el tiempo medio}
+    \label{figura:mem_time}
+\end{figure}
+
+\clearpage
+
+En la figura \ref{figura:mem_estimation} se observa que en todos los casos la estimación media es muy precisa. Esto podria llevar a
+la conclusión \textbf{errónea} de que el tamaño de la memoria es irrelevante para el resultado final. No obstante, en la figura
+\ref{figura:mem_errors} se observa que \textbf{cuanto mayor es la memoria usada menor es el \textbf{SE}}.
+De hecho, puede observarse
+que el \textbf{SE} disminuye considerablemente conforme la memoria aumenta al principio pero, sin embargo, cada vez disminuye
+menos. Más exactamente, puede apreciarse como \textbf{los distintos valores obtenidos obedecen perfectamente el error estándar
+esperado para el estimador de \texttt{HyperLogLog}}:
+$$SE = \frac{1.04}{\sqrt{m}}$$
 
 \begin{table}[h!]
     \centering
@@ -103,18 +171,13 @@ nos muestra que la precisión del algoritmo no depende del multiconjunto de dato
     \label{tabla:count_1024}
 \end{table}
 
-Para estudiar el impacto de la \textbf{memoria disponible} en los resultados se ha usado el \emph{dataset} \textit{D1},
-con valores de memoria que oscilan entre los $32 bytes$ y los $16 Kbytes$.
+Si se analiza la tabla \ref{tabla:count_1024} se puede apreciar que los
+\textbf{errores relativos} de las ejecuciones con memorias más reducidas se concentran en los valores superiores al $10\%$. No es
+hasta que la \textbf{memoria disponible} aumenta hasta los 512 bytes que el \textbf{error relativo} se concentra por debajo del
+$10\%$, y solo a partir de los 4 Kbytes dejan de aparecer ejecuciones por encima del $5\%$. Por tanto, para obtener una estimación
+precisa con poca memoria sería necesario realizar diversas ejecuciones, aumentando así el tiempo total, tal vez más de lo
+posible.
 
-En la tabla \ref{tabla:resumen_1024} se observa que en todos los casos la estimación media es razonablemente precisa, siendo incluso
-tan precisa la estimación con $64 bytes$ como la que disponía de $4 Kb$. Esto podria llevar a la conclusión, errónea, de que el tamaño
-de la memoria es irrelevante para el resultado final. No obstante, se observa que cuanto mayor es la
-memoria usada menor es el \textbf{SE}. Si se analiza la tabla \ref{count_1024} se puede apreciar que los \textbf{errores relativos} de
- las ejecuciones con memorias más reducidas se concentran en los valores superiores al $10\%$. No es hasta que la
-\textbf{memoria disponible} aumenta hasta los 512 bytes que el \textbf{error relativo} se concentra por debajo del $10\%$, y solo a
-partir de los $4 Kbytes$ dejan de aparecer ejecuciones por encima del $5\%$. Por tanto, para obtener los mismos resultados que
-usando más memoria se deberían usar muchas más muestras, cosa que enlantecería el proceso, tal vez más de lo posible.
-
-En general se podría concluir que el mínimo de \textbf{memoria necesaria} es de unos $512 bytes$, ya que su \textbf{SE} es del $5\%$
+En general se podría concluir que el mínimo de \textbf{memoria necesaria} es de unos 512 bytes, ya que su \textbf{SE} es del $5\%$
 aproximadamente, un valor aceptable en la mayoría de casos. Por otro lado, dependiendo de la importancia de la precisión, se puede
 aumentar o disminuir este valor.

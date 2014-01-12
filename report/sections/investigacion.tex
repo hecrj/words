@@ -44,6 +44,7 @@ Es decir, hay un 50\% de probabilidades de que $h(w)$ empiece por 1, un 25\% de 
 empiece por $001$, y así sucesivamente.
 
 \subsection{Descripción general del algoritmo}
+\label{investigacion:descripcion}
 
 La idea principal de \texttt{HyperLogLog} gira en torno a la propiedad de \textbf{uniformidad} que presentan las buenas
 funciones de hash.
@@ -116,8 +117,11 @@ a los que se les ha aplicado la función de hash}, que será, con una alta proba
 Y aislando: $n=-2^r \cdot log\left(1 - \frac{E}{2^r}\right)$.
 \end{description}
 
+El algoritmo \ref{algoritmo:hyper1} muestra la versión de \texttt{HyperLogLog} descrita en esta sección.
+
 \begin{algorithm}[h!]
 \caption{\texttt{HyperLogLog} para funciones de hash de 32 bits}
+\label{algoritmo:hyper1}
 \textit{Let $h: D\rightarrow \{0,1\}^{32}$ hash data from D to binary 32-bit word.}
 
 \textit{Let $\rho(s)$ be the position of the leftmost 1-bit of s: e.g.,
