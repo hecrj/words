@@ -38,7 +38,7 @@ la cantidad de memoria utilizada a \textbf{1024 bytes}. En el apéndice \ref{gra
 obtenidos para cada \emph{dataset} de forma detallada. Lo importante, sin embargo, es
 \textbf{observar los resultados obtenidos de manera general para cada muestra}.
 
-Se presentan las tablas \ref{tabla:count_1024} y \ref{tabla:resumen_1024} a modo de resumen para cada \emph{dataset}.
+Se presentan las tablas \ref{tabla:resumen_1024} y \ref{tabla:count_1024} a modo de resumen para cada \emph{dataset}.
 
 \begin{table}[h!]
     \centering
@@ -71,7 +71,7 @@ Se presentan las tablas \ref{tabla:count_1024} y \ref{tabla:resumen_1024} a modo
 
 Si se toma el \textbf{SE} de la tabla \ref{tabla:resumen_1024}, se puede observar que \textbf{no parece verse afectado por el \emph{dataset} utilizado}, puesto que en todos ellos oscila alrededor del $3\%$.
 
-Por su parte, los \textbf{tiempos medios} sí que tienen un relación bastante obvia con \textbf{N}
+Por su parte, los \textbf{tiempos medios} sí que tienen un relación bastante obvia con \textbf{N:}
 \textbf{cuanto mayor sea \textbf{N} más tardará el programa}. Esto es de esperar, puesto que el coste de un algoritmo suele
 depender directamente de la entrada que recibe.
 
@@ -122,8 +122,7 @@ En la figura \ref{figura:mem_estimation} se observa que en todos los casos la es
 la conclusión \textbf{errónea} de que el tamaño de la memoria es irrelevante para el resultado final. No obstante, en la figura
 \ref{figura:mem_errors} se observa que \textbf{cuanto mayor es la memoria usada menor es el \textbf{SE}}.
 De hecho, puede observarse
-que el \textbf{SE} disminuye considerablemente conforme la memoria aumenta al principio pero, sin embargo, cada vez disminuye
-menos. Más exactamente, puede apreciarse como \textbf{los distintos valores obtenidos obedecen perfectamente el error estándar
+que conforme la memoria aumenta el \textbf{SE} disminuye considerablemente al principio pero después modera su disminución. Más exactamente, puede apreciarse como \textbf{los distintos valores obtenidos obedecen perfectamente el error estándar
 esperado para el estimador de \texttt{HyperLogLog}}:
 $$SE = \frac{1.04}{\sqrt{m}}$$
 

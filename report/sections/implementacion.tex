@@ -35,11 +35,11 @@ La constante $a$ es un número de 64 bits \textbf{escogido aleatoriamente para c
 Esto es necesario para poder realizar un \textbf{estudio estadístico del estimador de cardinalidad} y, además, se evita la posibilidad
 de tener juegos de pruebas generados intencionadamente para hacer fallar la estimación, es decir, \textbf{no hay casos peores}.
 
-\texttt{djb2} sigue unos principios parecidos a los de un \texttt{Linear Congruental Generator}  (\emph{LCG} para abreviar),
+La función \texttt{djb2} sigue unos principios parecidos a los de un \texttt{Linear Congruental Generator}  (\emph{LCG} para abreviar),
 que tiene la forma:
 $$X_{n+1} \equiv \left( h \cdot X_n + c \right)~~\pmod{m}$$
 
-Donde $h=33$ y $m=2^{64}$. El valor elegido para $h$ es relativamente arbitrario, pero debe cumplir:
+Usando $h=33$ y $m=2^{64}$. El valor elegido para $h$ es relativamente arbitrario, pero debe cumplir:
 
 \begin{itemize}
 	\item $\textbf{h-1}$ \textbf{es divisible por todos los factores primos de} $\textbf{m}$.

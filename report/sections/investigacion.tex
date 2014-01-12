@@ -68,11 +68,11 @@ Y si el multiconjunto de entrada $M$ tiene $N$ elementos y $n$ elementos únicos
 \end{align*}
 
 Por ejemplo, si $M$ tiene \textbf{4 elementos} ($N = 4$) entonces se puede esperar que \textbf{exista uno tal que su hash
-empiece por 01}. Si $N = 8$ entonces uno debería empezar por 001, y así sucesivamente.
+empiece por 01}. Si $N = 8$ entonces un elemento debería empezar por 001, y así sucesivamente.
 
 Lo interesante, sin embargo, es \textbf{hacerlo a la inversa}.
 Sea $a \in \{0, 1\}$ y $k_{max}$ la posición \textbf{más tardía} en la que se ha observado
-una ocurrencia de $a$ para todo hash de todo elemento de $M$ entonces se puede estimar que $n$ es $E = 2^{k_{max}}$.
+una ocurrencia de $a$ para todo hash de todo elemento de $M$ entonces se puede estimar que la cardinalidad $n$ de $M$ sea $E = 2^{k_{max}}$.
 Por ejemplo, si tras aplicar $h$ a todo elemento de $M$ se observa que la posición más tardía en la que se ha observado un
 $1$ es 3 (empieza por $\textbf{001}$), entonces se puede estimar que $n$ es $E = 2^3 = \textbf{8}$ \textbf{elementos}.
 
@@ -83,14 +83,14 @@ y $k_{candidato}$ con los restantes. A partir de $T$ es posible mejorar el estim
 
 $$ E = 2 ^ { \frac{1}{m} \sum\limits_{i=0}^{m}\! T[i] } \cdot m $$
 
-Sin embargo, análisis estadístico realizado por \emph{Flajolet} ~\cite{hll:HyperLogLog} muestra que este estimador
+Sin embargo, un análisis estadístico realizado por \emph{Flajolet} ~\cite{hll:HyperLogLog} muestra que este estimador
 tiene cierta \textbf{tendencia a hacer estimaciones grandes}. Para corregirlo, la estimación se suele multiplicar por la
 \textbf{constante 0.79402}, encontrada de manera \textbf{experimental} por el mismo \emph{Flajolet}.
-Este estimador es el que utiliza el algoritmo \texttt{LogLog}, una versión anterior a \texttt{HyperLogLog}, y tiene
+Este estimador es el que utiliza el algoritmo \texttt{LogLog}, una versión anterior a \texttt{HyperLogLog}, el cual tiene
 \textbf{un error estándar} de  $\frac{1.30}{\sqrt{m}}$.
 
 \texttt{HyperLogLog} se diferencia del algoritmo \texttt{LogLog} en que aplica la \textbf{media armónica} en vez de la
-media aritmética, \textbf{reduciendo así el error estándar} hasta $\frac{1.04}{\sqrt{m}}$.
+media aritmética, obteniendo la misma precisión usando solo el $64\%$ de \textbf{memoria que LogLog}, y \textbf{reduciendo así el error estándar} hasta $\frac{1.04}{\sqrt{m}}$.
 
 Por último, si la estimación resultante es muy alta o muy baja entonces se lleva a cabo una corrección:
 
