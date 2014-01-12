@@ -53,6 +53,8 @@ Un \emph{LCG} es un algoritmo que produce una secuencia de números \emph{pseudo
 \textbf{ecuación lineal}. Una de sus principales ventajas es que necesita un \textbf{número muy reducido de bits para mantener el
 estado}, por lo que es una buena elección en el entorno en el que se utiliza, donde se dispone de \textbf{poca memoria}.
 
+Puede consultarse el \textbf{código \texttt{C++}} implementando esta función en el \textbf{apéndice \ref{codigo:hash}}.
+
 \subsection{Algoritmo \texttt{HyperLogLog}}
 \label{implementacion:algoritmo}
 
@@ -61,8 +63,9 @@ corrección para estimaciones altas vista en la sección: \nameref{investigacion
 porque, en la práctica, observar estimaciones cercanas a $2^{64}$ es poco común y, en esos casos, quizás sería mejor utilizar más bits
 en la función de hash antes que aplicar la corrección.
 
-El algoritmo \ref{algoritmo:hyper2} muestra en pseudocódigo la versión final que se ha implementado en \texttt{C++} y sobre la que
-se ha realizado el análisis estadístico de la sección \ref{analisis}.
+El algoritmo \ref{algoritmo:hyper2} muestra en pseudocódigo la \textbf{versión final} que se ha implementado en \texttt{C++},
+\textbf{disponible en el apéndice \ref{codigo:hyperloglog}}, y sobre la que se ha realizado el \textbf{análisis estadístico}
+de la sección \ref{analisis}.
 
 \begin{algorithm}[h!]
 \caption{\texttt{HyperLogLog} para funciones de hash de 64 bits}

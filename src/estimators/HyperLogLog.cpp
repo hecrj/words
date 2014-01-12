@@ -9,7 +9,7 @@ static const int MAX_LENGTH = 30;
 HyperLogLog::HyperLogLog(int m)
 {
     msbits = floor(log2((double) m));
-    lsbits = UniversalHash::BITS - msbits;
+    lsbits = Djb2Hash::BITS - msbits;
     memory = (1 << msbits);
     table = vector<uint8_t>(memory, 0);
     mask = (1 << lsbits) - 1;
@@ -41,7 +41,7 @@ void HyperLogLog::read(const string &filename)
         h = hashing.hash(str);
         i = (h >> lsbits);
         w = h & mask;
-        table[i] = max(table[i], (uint8_t)(UniversalHash::leading_zeros(w) - msbits));
+        table[i] = max(table[i], (uint8_t)(Djb2Hash::leading_zeros(w) - msbits));
 
         total_read++;
     }

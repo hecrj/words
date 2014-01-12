@@ -1,4 +1,4 @@
-#include "UniversalHash.hpp"
+#include "Djb2Hash.hpp"
 #include <stdlib.h>
 #include <time.h>
 
@@ -6,9 +6,9 @@
 #include <iostream>
 #endif
 
-const int UniversalHash::BITS = sizeof(hash_t) * 8;
+const int Djb2Hash::BITS = sizeof(hash_t) * 8;
 
-UniversalHash::UniversalHash()
+Djb2Hash::Djb2Hash()
 {
     rand(); // Throw first random value (not so random?)
 
@@ -23,7 +23,7 @@ UniversalHash::UniversalHash()
     #endif
 }
 
-hash_t UniversalHash::hash(unsigned char *str)
+hash_t Djb2Hash::hash(unsigned char *str)
 {
     hash_t hash = 5381;
     int c;
@@ -34,7 +34,7 @@ hash_t UniversalHash::hash(unsigned char *str)
     return a * hash;
 }
 
-int UniversalHash::leading_zeros(hash_t value)
+int Djb2Hash::leading_zeros(hash_t value)
 {
     // Be careful, magic code below!
     if (value == 0) return 64;

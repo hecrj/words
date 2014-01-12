@@ -6,7 +6,7 @@
 
 \subsection{Obtención de las muestras}
 Para la \textbf{obtención de las muestras} necesarias para el \textbf{análisis estadístico} del algoritmo \texttt{HyperLogLog}
-se ha utilizando un script programado en \textbf{Ruby}. Puede verse el código en el apéndice ...
+se ha utilizando un script programado en \textbf{\texttt{Ruby}}. Puede verse el código en el \textbf{apéndice \ref{codigo:ruby}}.
 
 El script recibe como parámetros:
 \begin{enumerate}
@@ -18,7 +18,7 @@ El script recibe como parámetros:
 
 El script \textbf{compila y ejecuta el código en \texttt{C++} que implementa el algoritmo \texttt{HyperLogLog} para recoger los datos
 y crea archivos con los resultados de cada muestra}, en forma de tabla. Finalmente, pregunta si se desean
-\textbf{generar gráficas} a partir de los resultados obtenidos y, si se responde positivamente, ejecuta un \textbf{script en R que las genera autómaticamente} (disponible en el apéndice ...).
+\textbf{generar gráficas} a partir de los resultados obtenidos y, si se responde positivamente, ejecuta un \textbf{script en R que las genera autómaticamente} (disponible en el \textbf{apéndice \ref{codigo:graficas}}).
 
 Para el primer análisis: \textbf{\nameref{analisis:mem_1024}}, las muestras se han obtenido utilizando los parámetros por defecto del script.
 
@@ -109,14 +109,14 @@ respectivamente.
     \label{figura:mem_errors}
 \end{figure}
 
+\clearpage
+
 \begin{figure}[h!]
     \centering
         \includegraphics[width=0.64\textwidth]{../figs/D1/mem_time_rel.pdf}
         \caption{Influencia de la memoria disponible sobre el tiempo medio}
     \label{figura:mem_time}
 \end{figure}
-
-\clearpage
 
 En la figura \ref{figura:mem_estimation} se observa que en todos los casos la estimación media es muy precisa. Esto podria llevar a
 la conclusión \textbf{errónea} de que el tamaño de la memoria es irrelevante para el resultado final. No obstante, en la figura
@@ -145,7 +145,7 @@ $$SE = \frac{1.04}{\sqrt{m}}$$
 
 \end{tabular}
     \caption{Influencia de la memoria sobre el dataset D1. Resumen de resultados.}
-    \label{tabla:resumen_1024}
+    \label{tabla:resumen_mem}
 \end{table}
 
 \begin{table}[h!]
@@ -167,10 +167,10 @@ $$SE = \frac{1.04}{\sqrt{m}}$$
 
 \end{tabular}
     \caption{Influencia de la memoria sobre el dataset D1. Clasificación de las ejecuciones según el error relativo (\%).}
-    \label{tabla:count_1024}
+    \label{tabla:count_mem}
 \end{table}
 
-Si se analiza la tabla \ref{tabla:count_1024} se puede apreciar que los
+Si se analiza la tabla \ref{tabla:count_mem} se puede apreciar que los
 \textbf{errores relativos} de las ejecuciones con memorias más reducidas se concentran en los valores superiores al $10\%$. No es
 hasta que la \textbf{memoria disponible} aumenta hasta los 512 bytes que el \textbf{error relativo} se concentra por debajo del
 $10\%$, y solo a partir de los 4 Kbytes dejan de aparecer ejecuciones por encima del $5\%$. Por tanto, para obtener una estimación

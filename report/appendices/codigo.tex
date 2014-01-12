@@ -1,0 +1,43 @@
+% !TEX encoding = UTF-8 Unicode
+% !TEX root = ../report.tex
+% 
+\section{Código fuente}
+
+\subsection{Programa en \texttt{C++}}
+\label{codigo:programa}
+
+\subsubsection{\texttt{main.cpp}}
+\inputminted{cpp}{../src/main.cpp}
+
+\subsubsection{Clase \texttt{Djb2Hash}}
+\label{codigo:hash}
+
+\paragraph{hashing/Djb2Hash.hpp}
+\inputminted{cpp}{../src/hashing/Djb2Hash.hpp}
+
+\paragraph{hashing/Djb2Hash.cpp}
+\inputminted{cpp}{../src/hashing/Djb2Hash.cpp}
+
+\subsubsection{Clase \texttt{CardinalityEstimator}}
+
+Esta clase define una \textbf{API} que todo \textbf{estimador de la cardinalidad} debería implementar.
+
+\inputminted{cpp}{../src/estimators/CardinalityEstimator.hpp}
+
+\subsubsection{Clase \texttt{HyperLogLog}}
+\label{codigo:hyperloglog}
+
+\paragraph{estimators/HyperLogLog.hpp}
+\inputminted{cpp}{../src/estimators/HyperLogLog.hpp}
+
+\paragraph{estimators/HyperLogLog.cpp}
+\inputminted{cpp}{../src/estimators/HyperLogLog.cpp}
+
+\clearpage
+\subsection{Script en \texttt{Ruby} para la obtención de muestras}
+\label{codigo:ruby}
+\inputminted{rb}{../test.rb}
+
+\subsection{Script en \texttt{R} para generar las gráficas}
+\label{codigo:graficas}
+\inputminted{r}{../plots.r}

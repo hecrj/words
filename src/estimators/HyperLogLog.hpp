@@ -2,14 +2,14 @@
 #define HyperLogLog_HPP
 
 #include "CardinalityEstimator.hpp"
-#include "../hashing/UniversalHash.hpp"
+#include "../hashing/Djb2Hash.hpp"
 #include <vector>
 
 using namespace std;
 
 class HyperLogLog : public CardinalityEstimator
 {
-    UniversalHash hashing;
+    Djb2Hash hashing;
     vector<uint8_t> table;
     int memory;
     int msbits;
