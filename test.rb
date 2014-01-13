@@ -283,7 +283,7 @@ end
 
 # Preguntar si se desean generar gráficas a partir de los nuevos resultados
 if File.exists?(dir)
-  puts "Generate plots? This may overwrite files found in figs..."
+  puts "Generate plots? This may overwrite files found in plots..."
   print "Are you sure? [y/n] "
   exit(0) unless $stdin.gets.chomp == "y"
 end

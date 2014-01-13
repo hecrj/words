@@ -1,7 +1,7 @@
 setwd(commandArgs(TRUE)[1])
 
 # Variables globales
-figures_dir = "figs"
+figures_dir = "plots"
 data_dir = "data"
 
 # Devuelve una ruta para cargar/guardar datos
