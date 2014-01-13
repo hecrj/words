@@ -15,7 +15,7 @@ class CardinalityEstimator
 {
     public:
         /**
-         * Constructora
+         * Destructora
          */
         virtual ~CardinalityEstimator(){};
 

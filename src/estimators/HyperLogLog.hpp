@@ -30,7 +30,7 @@ class HyperLogLog : public CardinalityEstimator
     // Utilizada para aplicar la media armónica
     double alpha;
 
-    //Esta variable almacena el número total de elementos procesados
+    // Esta variable almacena el número total de elementos procesados
     unsigned int total_read;
 
     public:

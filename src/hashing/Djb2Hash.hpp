@@ -6,9 +6,8 @@
 
 using namespace std;
 
-/**
- * Hash de 64 bits
- */
+
+// Hash de 64 bits
 typedef uint64_t hash_t;
 
 /**
