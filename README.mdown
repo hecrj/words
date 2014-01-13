@@ -6,11 +6,15 @@ file contains. More exactly, it performs a cardinality estimation.
 Compiling
 ------------------
 Use the provided Makefile:
-$ make
+
+`$ make`
 
 Usage
 ------------------
-words [-M <memory>] [-S <seed>] FILENAME
+`words [-M <memory>] [-S <seed>] FILENAME`
+
 Options:
+
     -M <memory>    Maximum memory to use (in bytes).
+
     -S <seed>      Seed to use in the random generator.
