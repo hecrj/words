@@ -73,7 +73,7 @@ empiece por 01}. Si $N = 8$ entonces un elemento debería empezar con la secuenc
 
 Lo interesante, sin embargo, es \textbf{hacerlo a la inversa}.
 Sea $a \in \{0, 1\}$ y $k_{max}$ la posición \textbf{más tardía} en la que se ha observado
-una ocurrencia de $a$ para todo hash de todo elemento de $M$ entonces se puede estimar que la cardinalidad $n$ de $M$ sea $E = 2^{k_{max}}$.
+una ocurrencia de $a$ para todo hash de todo elemento de $M$ entonces se puede estimar que la cardinalidad $n$ de $M$ es $E = 2^{k_{max}}$.
 Por ejemplo, si tras aplicar $h$ a todo elemento de $M$ se observa que la posición más tardía en la que se ha observado un
 $1$ es 3 (el elemento empieza con la secuencia $\textbf{001}$), entonces se puede estimar que $n$ es $E = 2^3 = \textbf{8}$ \textbf{elementos}.
 
@@ -91,7 +91,7 @@ Este estimador es el que utiliza el algoritmo \texttt{LogLog}, una versión ante
 \textbf{un error estándar} cerca de $\frac{1.30}{\sqrt{m}}$.
 
 \texttt{HyperLogLog} se diferencia del algoritmo \texttt{LogLog} en que aplica la \textbf{media armónica} en vez de la
-media aritmética y \textbf{reduciendo así el error estándar} hasta $\frac{1.04}{\sqrt{m}}$.
+media aritmética, \textbf{reduciendo así el error estándar} hasta $\frac{1.04}{\sqrt{m}}$.
 
 Por último, si la estimación resultante es muy alta o muy baja entonces se lleva a cabo una corrección:
 

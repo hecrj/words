@@ -11,8 +11,8 @@ se ha utilizando un script programado en \textbf{\texttt{Ruby}}. Puede verse el 
 El script recibe como parámetros:
 \begin{enumerate}
 \item Los datasets de los que se quieren recoger muestras (por defecto \textbf{todos})
-\item Los casos por muestra (por defecto \textbf{200})
 \item Las memorias de las que recoger datos (por defecto \textbf{1024})
+\item Los casos por muestra (por defecto \textbf{200})
 \item El directorio donde guardar resultados (por defecto \textbf{data})
 \end{enumerate}
 
@@ -77,7 +77,7 @@ depender directamente de la entrada que recibe.
 
 \textbf{Los tiempos por elemento varían considerablemente dependiendo del dataset}. Esto también es de esperar, puesto que
 un dataset puede contener, en media, más elementos de \textbf{una longitud mayor} respecto a otro y, por lo tanto,
-\textbf{aplicar la función de hash djb2 (sección \ref{implementacion:hash}) tendrá un coste mayor}.
+\textbf{aplicar la función de hash djb2 (sección \ref{implementacion:hash}) tendrá un coste acumulado mayor}.
 
 Finalmente, en la tabla \ref{tabla:count_1024} se observa que los valores de \textbf{los errores relativos} están
 concentrados, en todos los \emph{datasets}, en el intervalo $[0,5)$, con muy pocos valores en total por encima del $5\%$.
@@ -119,13 +119,18 @@ respectivamente.
 \end{figure}
 
 En la figura \ref{figura:mem_estimation} se observa que en todos los casos la estimación media es muy precisa. Esto podria llevar a
-la conclusión \textbf{errónea} de que el tamaño de la memoria es irrelevante para el resultado final. No obstante, en la figura
-\ref{figura:mem_errors} se observa que \textbf{cuanto mayor es la memoria usada menor es el \textbf{SE}}.
-De hecho, puede observarse el \textbf{SE} disminuye considerablemente al principio, conforme la memoria aumenta. Sin embargo,
+la conclusión \textbf{errónea} de que el tamaño de la memoria es irrelevante para el resultado final. En la figura
+\ref{figura:mem_errors} se observa que esto no es así: \textbf{cuanto mayor es la memoria usada menor es el \textbf{SE}}.
+De hecho, puede observarse que el \textbf{SE} disminuye considerablemente al principio, conforme la memoria aumenta.
+Sin embargo,
 este efecto se suaviza rápidamente y \textbf{aumentar la memoria deja de ser efectivo}. Más exactamente, puede apreciarse como
 \textbf{los distintos valores obtenidos obedecen perfectamente el error estándar esperado para el estimador de
 \texttt{HyperLogLog}}:
 $$SE = \frac{1.04}{\sqrt{m}}$$
+
+En la figura \ref{figura:mem_time} no se observa que la cantidad de memoria utilizada tenga influencia sobre el tiempo medio
+de las ejecuciones. Sin embargo, es de esperar que el tiempo aumente para valores muy grandes de memoria debido a limitaciones
+del hardware (\textbf{memoria caché}).
 
 \begin{table}[h!]
     \centering
