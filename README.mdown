@@ -1,5 +1,16 @@
-Words
+words
 ==================
-Words is a simple command-line tool that estimates the number of different words that a
+words is a simple program that estimates the number of different words that a
 file contains. More exactly, it performs a cardinality estimation.
 
+Compiling
+------------------
+Use the provided Makefile:
+$ make
+
+Usage
+------------------
+words [-M <memory>] [-S <seed>] FILENAME
+Options:
+    -M <memory>    Maximum memory to use (in bytes).
+    -S <seed>      Seed to use in the random generator.

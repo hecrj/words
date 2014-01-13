@@ -251,6 +251,10 @@ memorys    ||= "1024"
 num_cases  ||= "200"
 dir        ||= "data"
 
+# Procesar valores
+datasets = '{' + datasets.split(' ').join(',') + '}' unless datasets == "*"
+memorys = memorys.split(' ')
+
 # Pedir confirmación si el directorio de muestras ya existe
 if File.exists?(dir)
   puts "This may overwrite files found in #{dir}..."
@@ -260,8 +264,6 @@ end
 
 # Generar el ejecutable a través del Makefile
 status "Making executable", "make"
-
-memorys = memorys.split(',')
 
 # Dir[ruta] devuelve un Array de strings con los archivos desde el directorio
 # de trabajo que coinciden con la ruta.
@@ -280,6 +282,8 @@ Dir["dataset/#{datasets}.dat"].sort!.each do |dataset|
 
   puts separator
 end
+
+exit(0) unless dir == "data"
 
 # Preguntar si se desean generar gráficas a partir de los nuevos resultados
 if File.exists?(dir)
