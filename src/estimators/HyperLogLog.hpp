@@ -9,24 +9,34 @@ using namespace std;
 
 class HyperLogLog : public CardinalityEstimator
 {
-    //La instancia de djb2 que usamos como función de hash
+    // La instancia de djb2 que se usa como función de hash
     Djb2Hash hashing;
-    //La tabla donde almacenamos los 'm' valores
+
+    // Tabla donde se almacenan los k_max
     vector<uint8_t> table;
-    //La memoria que usamos, en bytes
+
+    // Memoria utilizada, en bytes
     int memory;
-    //
+
+    // Cantidad de bits que determinan la posición en la tabla
     int msbits;
-    //Estos son los bits que se usaran para determinar la posición del elemento en la tabla
+    
+    // Bits menos significativos del hash (k_candidato)
     int lsbits;
-    //Esta máscara obtiene el valor en la tabla del elemento
+
+    // Máscara para obtener los últimos lsbits de un hash
     hash_t mask;
-    //Esta alpha se fija en la constructora, y se usa en el cálculo de la estimación
+
+    // Utilizada para aplicar la media armónica
     double alpha;
-    //Esta variable almacena el número de elementos procesados
+
+    //Esta variable almacena el número total de elementos procesados
     unsigned int total_read;
 
     public:
+        /**
+         * Constructora
+         */
         HyperLogLog(int memory);
 
         void read(const string &filename);

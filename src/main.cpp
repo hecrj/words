@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include "estimators/HyperLogLog.hpp"
 
+/**
+ * Imprime una explicación sobre cómo utilizar el programa.
+ */
 void usage()
 {
     cout << "Usage:    words [-M <memory>] [-S <seed>] FILENAME" << endl;
@@ -15,11 +18,11 @@ void usage()
 
 int main(int argc, char *argv[])
 {
-    // Default parameters
+    // Parámetros por defecto
     int memory = 1024;
     int seed = time(NULL);
 
-    // Parameter/option parsing
+    // Parseo de parámetros y opciones
     if(argc < 2)
         usage();
 
@@ -46,14 +49,14 @@ int main(int argc, char *argv[])
         else if(param == "-S") seed = atoi(argv[i++]);
     }
 
-    // Set seed
+    // Definir la semilla
     srand(seed);
 
-    // Read input
+    // Leer el archivo
     HyperLogLog hloglog(memory);
     hloglog.read(filename);
 
-    // Print estimation
+    // Imprimir la estimación
     cout << hloglog.estimation() << ' ' << hloglog.total() << endl;
 
     return 0;

@@ -6,21 +6,37 @@
 
 using namespace std;
 
+/**
+ * Hash de 64 bits
+ */
 typedef uint64_t hash_t;
 
+/**
+ * Clase que implemente la función de hash Djb2
+ */
 class Djb2Hash
 {
-    //Esta variable es la semilla aleatoria que le proporcionamos para
-    //garantizar que cada ejecución dé un resultado distinto
+    // Número aleatorio de 64 bits
     hash_t a;
 
     public:
+    	// Cantidad de bits de los hashes producidos
         static const int BITS;
 
+        /**
+         * Constructora
+         */
         Djb2Hash();
+
+        /**
+         * Función de hash
+         */
         hash_t hash(unsigned char *str);
 
-        static int leading_zeros(hash_t hash);
+        /**
+         * Devuelve la posición en la que se ha visto el primer 1.
+         */
+        static int first_one(hash_t hash);
 };
 
 #endif

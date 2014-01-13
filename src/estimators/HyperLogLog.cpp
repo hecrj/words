@@ -4,22 +4,23 @@
 #include <cstdlib>
 #include <iostream>
 
-static const int MAX_LENGTH = 30;
+static const int MAX_LENGTH = 31;
 
 HyperLogLog::HyperLogLog(int m)
 {
+    // Si m no es una potencia de 2, encontramos la primera potencia
+    // a la baja
     msbits = floor(log2((double) m));
     lsbits = Djb2Hash::BITS - msbits;
     memory = (1 << msbits);
     table = vector<uint8_t>(memory, 0);
     mask = (1 << lsbits) - 1;
-    alpha = 0.7213 / (1.0 + 1.079 / memory);
     total_read = 0;
+
+    // alpha se utiliza para aplicar la media armónica
+    alpha = 0.7213 / (1.0 + 1.079 / memory);
 }
 
-/**
-* Lee y procesa la entrada, llenando la tabla
-*/
 void HyperLogLog::read(const string &filename)
 {
     unsigned char str[MAX_LENGTH];
@@ -27,10 +28,12 @@ void HyperLogLog::read(const string &filename)
     hash_t w;
     unsigned int i;
 
-    #ifdef VERBOSE
+#ifdef VERBOSE
         cout << "Read started" << endl;
-    #endif
+#endif
 
+    // Usar C directamente resulta más rápido
+    // y fácil para la función de hash
     FILE* fp = fopen(filename.c_str(), "r");
 
     if(fp == NULL)
@@ -44,20 +47,20 @@ void HyperLogLog::read(const string &filename)
         h = hashing.hash(str);
         i = (h >> lsbits);
         w = h & mask;
-        table[i] = max(table[i], (uint8_t)(Djb2Hash::leading_zeros(w) - msbits));
+        table[i] = max(table[i], (uint8_t)(Djb2Hash::first_one(w) - msbits));
 
         total_read++;
     }
 
-    #ifdef VERBOSE
+#ifdef VERBOSE
         cout << "Read finished" << endl;
         cout << "Memory used:     ~" << memory << " bytes" << endl;
-    #endif
+#endif
 }
 
 /**
-* Calcula la estimación una vez se ha procesado todo el conjunto de entrada,
-* aplicando la corrección en caso de que tenga un valor demasiado bajo
+* Calcula la estimación a partir de la tabla, aplicando la corrección en
+* caso de que tenga un valor demasiado bajo
 */
 estimation_t HyperLogLog::estimation()
 {
@@ -68,6 +71,7 @@ estimation_t HyperLogLog::estimation()
 
     double raw = alpha * memory * memory * (1.0 / sum);
 
+    // Estimación baja -> Corrección
     if(raw < (2.5 * memory))
     {
         int zeros = count_zeros();
@@ -90,8 +94,8 @@ estimation_t HyperLogLog::total()
 }
 
 /**
-* Devuelve el número de elementos de la tabla vacíos, para ser usados en la corrección
-* de la estimación
+* Devuelve el número de elementos de la tabla vacíos, para ser usados en la
+* corrección de la estimación.
 */
 int HyperLogLog::count_zeros()
 {

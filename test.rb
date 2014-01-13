@@ -33,8 +33,8 @@ end
 # 1. Imprime y muestra el mensaje alineado a la izquierda.
 # 2. Ejecuta el comando
 # 3. Si el comando falla, muestra "failed" y termina la ejecución.
-#    Si el comando se ejecuta correctamente, muestra "done" y devuelve una string con el output
-#    producido por la ejecución del comando.
+#    Si el comando se ejecuta correctamente, muestra "done" y devuelve una
+#    string con el output producido por la ejecución del comando.
 def status(message, cmd)
   print message + '...'
   $stdout.flush
@@ -96,9 +96,12 @@ class Sample
     @cases = []
 
     # Obtener el número total de palabras y el número de palabras únicas:
-    # wc devuelve valores separados por espacios. Interesa el segundo (número de palabras).
-    @total = status('Calculating total number of words', "wc #{@dataset}").split[1].to_i
-    @real = status('Calculating number of unique words', "sort -u #{@dataset} | wc").split[1].to_i
+    # wc devuelve valores separados por espacios. Interesa el segundo
+    # (número de palabras).
+    @total = status('Calculating total number of words',
+      "wc #{@dataset}").split[1].to_i
+    @real = status('Calculating number of unique words',
+      "sort -u #{@dataset} | wc").split[1].to_i
   end
 
   # Obtiene num_cases nuevos casos y los añade a la muestra
@@ -143,7 +146,7 @@ class Sample
     summary_file = dataset_path % 'summary'
     count_file   = dataset_path % 'count'
 
-    # Se prepara el directorio que contendrá los resultados, a no ser que exista
+    # Se prepara el directorio que contendrá resultados, a no ser que exista
     unless File.exists?("")
       status "Creating directory #{dir}/#{@name}", "mkdir -p #{dir}/#{@name}"
     end
@@ -165,8 +168,10 @@ class Sample
 
   def save_summary(summary_file)
     # Crear el fichero con información general
-    header = [ 'real', 'total', 'avgEstimation', 'stdError', 'avgTimeMs', 'timePerWordUs' ]
-    body   = [ @real, @total, average(:estimation), standard_error, average(:time), time_per_word ]
+    header = [ 'real', 'total', 'avgEstimation', 'stdError', 'avgTimeMs',
+      'timePerWordUs' ]
+    body   = [ @real, @total, average(:estimation), standard_error,
+      average(:time), time_per_word ]
 
     File.open("#{summary_file}.txt", 'w') do |file|
       file.puts row(*header), row(*body)
@@ -174,6 +179,7 @@ class Sample
 
     say_status "Writing file #{summary_file}.txt", :done
 
+    # Adicionalmente, generar un fichero LaTeX para poderlo incluir en tablas
     File.open("#{summary_file}.tex", 'w') do |file|
       file.print body.join(' & ')
       file.puts '\\\ \hline'
@@ -225,12 +231,13 @@ class Sample
   end
 
   def standard_error
-    est = @cases.map{ |sample_case| sample_case.estimation**2 }.sum / @cases.size
-    Math.sqrt(est - average(:estimation)**2) / @real
+    est = @cases.map{ |sample_case| sample_case.estimation**2 }.sum
+    Math.sqrt((est / @cases.size) - average(:estimation)**2) / @real
   end
 
   def count_error_between(a, b)
-    @cases.select{ |sample_case| a <= sample_case.error and sample_case.error < b }.size
+    @cases.select{ |sample_case| a <= sample_case.error and
+      sample_case.error < b }.size
   end
 end
 
@@ -256,13 +263,15 @@ status "Making executable", "make"
 
 memorys = memorys.split(',')
 
-# Dir[ruta] devuelve un Array de strings con los archivos desde el directorio de
-# trabajo que coinciden con la ruta. Por defecto la ruta es: "dataset/*.dat",
-# por lo que se obtienen muestras de todos los datasets.
+# Dir[ruta] devuelve un Array de strings con los archivos desde el directorio
+# de trabajo que coinciden con la ruta.
+# Por defecto la ruta es: "dataset/*.dat", por lo que se obtienen muestras
+# de todos los datasets.
 # Por cada dataset que coincida con la ruta, de manera ordenada:
 Dir["dataset/#{datasets}.dat"].sort!.each do |dataset|
   memorys.each do |memory|
-    puts "#{dataset} with #{memory} bytes".center(COLUMN_NUM * COLUMN_SIZE, '=')
+    puts "#{dataset} with #{memory} bytes".center(COLUMN_NUM * COLUMN_SIZE,
+      '=')
 
     sample = Sample.new(dataset, memory.to_i)
     sample.obtain_cases!(num_cases.to_i)
@@ -272,11 +281,13 @@ Dir["dataset/#{datasets}.dat"].sort!.each do |dataset|
   puts separator
 end
 
-# Preguntar si se desean generar las gráficas a partir de los nuevos resultados
+# Preguntar si se desean generar gráficas a partir de los nuevos resultados
 if File.exists?(dir)
   puts "Generate plots? This may overwrite files found in figs..."
   print "Are you sure? [y/n] "
   exit(0) unless $stdin.gets.chomp == "y"
 end
 
-status "Plotting", "Rscript plots.r"
+
+
+status "Plotting", "Rscript plots.r #{path}"
