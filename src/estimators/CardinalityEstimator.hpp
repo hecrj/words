@@ -14,9 +14,9 @@ typedef unsigned int estimation_t;
 class CardinalityEstimator
 {
     public:
-    	/**
-    	 * Constructora
-    	 */
+        /**
+         * Constructora
+         */
         virtual ~CardinalityEstimator(){};
 
         /**

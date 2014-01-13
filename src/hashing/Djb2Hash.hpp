@@ -20,7 +20,7 @@ class Djb2Hash
     hash_t a;
 
     public:
-    	// Cantidad de bits de los hashes producidos
+        // Cantidad de bits de los hashes producidos
         static const int BITS;
 
         /**
