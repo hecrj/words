@@ -18,8 +18,9 @@ conjunto de tamaño arbitrario $A$ con otro elemento de un conjunto de tamaño f
 $$f: A \rightarrow B$$
 
 Una \textbf{buena} función de hash debe ser lo más \textbf{uniforme} posible, es decir, debe mapear los elementos de
-$A$ tan \textbf{equitativamente} como sea posible sobre $B$. En otras palabras, todo elemento en $B$ debe ser generado
-por la función de hash con \textbf{aproximadamente la misma probabilidad}.
+$A$ tan \textbf{equitativamente} como sea posible sobre $B$. En otras palabras, si se aplica la función de hash a cualquier
+elemento de A entonces se puede esperar como imagen a cualquier elemento de B con
+\textbf{aproximadamente la misma probabilidad}.
 
 Por lo tanto, si $h$ es una buena función de hash:
 $$h: \Sigma^* \rightarrow \{0,1\}^r$$
@@ -87,10 +88,10 @@ Sin embargo, un análisis estadístico realizado por \emph{Flajolet} ~\cite{hll:
 tiene cierta \textbf{tendencia a hacer estimaciones grandes}. Para corregirlo, la estimación se suele multiplicar por la
 \textbf{constante 0.79402}, encontrada de manera \textbf{experimental} por el mismo \emph{Flajolet}.
 Este estimador es el que utiliza el algoritmo \texttt{LogLog}, una versión anterior a \texttt{HyperLogLog}, el cual tiene
-\textbf{un error estándar} de  $\frac{1.30}{\sqrt{m}}$.
+\textbf{un error estándar} cerca de $\frac{1.30}{\sqrt{m}}$.
 
 \texttt{HyperLogLog} se diferencia del algoritmo \texttt{LogLog} en que aplica la \textbf{media armónica} en vez de la
-media aritmética, obteniendo la misma precisión usando solo el $64\%$ de \textbf{memoria que LogLog}, y \textbf{reduciendo así el error estándar} hasta $\frac{1.04}{\sqrt{m}}$.
+media aritmética y \textbf{reduciendo así el error estándar} hasta $\frac{1.04}{\sqrt{m}}$.
 
 Por último, si la estimación resultante es muy alta o muy baja entonces se lleva a cabo una corrección:
 
@@ -112,8 +113,8 @@ como sustituto de $E$:
 $$E* = -2^{32} \cdot log\left(1 - \frac{E}{2^{32}}\right)$$
 
 Para esta fórmula, se usa el mismo modelo de las canastas del punto anterior, pero se sustituye $m$
-por $2^r$, siendo $r$ el número de bits usados en la función de hash. Es decir, $E$ \textbf{estima el número de valores diferentes
-a los que se les ha aplicado la función de hash}, que será, con una alta probabilidad, próximo a $2^r \cdot (1 - e^{\frac{-n}{2^r}})$.
+por $2^r$, siendo $r$ el número de bits usados en la función de hash. Es decir, $E$ \textbf{estima el número de hashes diferentes}
+obtenidos, que será, con una alta probabilidad, próximo a $2^r \cdot (1 - e^{\frac{-n}{2^r}})$.
 Y aislando: $n=-2^r \cdot log\left(1 - \frac{E}{2^r}\right)$.
 \end{description}
 

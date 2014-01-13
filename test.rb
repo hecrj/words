@@ -288,6 +288,5 @@ if File.exists?(dir)
   exit(0) unless $stdin.gets.chomp == "y"
 end
 
-
-
+path = File.expand_path(File.dirname(File.dirname(__FILE__)))
 status "Plotting", "Rscript plots.r #{path}"

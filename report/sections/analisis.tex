@@ -12,7 +12,7 @@ El script recibe como parámetros:
 \begin{enumerate}
 \item Los datasets de los que se quieren recoger muestras (por defecto \textbf{todos})
 \item Los casos por muestra (por defecto \textbf{200})
-\item Las memorias de las que recoger datas (por defecto \textbf{1024})
+\item Las memorias de las que recoger datos (por defecto \textbf{1024})
 \item El directorio donde guardar resultados (por defecto \textbf{data})
 \end{enumerate}
 
@@ -121,9 +121,10 @@ respectivamente.
 En la figura \ref{figura:mem_estimation} se observa que en todos los casos la estimación media es muy precisa. Esto podria llevar a
 la conclusión \textbf{errónea} de que el tamaño de la memoria es irrelevante para el resultado final. No obstante, en la figura
 \ref{figura:mem_errors} se observa que \textbf{cuanto mayor es la memoria usada menor es el \textbf{SE}}.
-De hecho, puede observarse
-que conforme la memoria aumenta el \textbf{SE} disminuye considerablemente al principio pero después modera su disminución. Más exactamente, puede apreciarse como \textbf{los distintos valores obtenidos obedecen perfectamente el error estándar
-esperado para el estimador de \texttt{HyperLogLog}}:
+De hecho, puede observarse el \textbf{SE} disminuye considerablemente al principio, conforme la memoria aumenta. Sin embargo,
+este efecto se suaviza rápidamente y \textbf{aumentar la memoria deja de ser efectivo}. Más exactamente, puede apreciarse como
+\textbf{los distintos valores obtenidos obedecen perfectamente el error estándar esperado para el estimador de
+\texttt{HyperLogLog}}:
 $$SE = \frac{1.04}{\sqrt{m}}$$
 
 \begin{table}[h!]
@@ -174,7 +175,7 @@ Si se analiza la tabla \ref{tabla:count_mem} se puede apreciar que los
 \textbf{errores relativos} de las ejecuciones con memorias más reducidas se concentran en los valores superiores al $10\%$. No es
 hasta que la \textbf{memoria disponible} aumenta hasta los 512 bytes que el \textbf{error relativo} se concentra por debajo del
 $10\%$, y solo a partir de los 4 Kbytes dejan de aparecer ejecuciones por encima del $5\%$. Por tanto, para obtener una estimación
-precisa con poca memoria sería necesario realizar diversas ejecuciones, aumentando así el tiempo total, tal vez más de lo
+precisa con poca memoria sería necesario \textbf{realizar diversas ejecuciones}, aumentando así el tiempo total, tal vez más de lo
 posible.
 
 En general se podría concluir que el mínimo de \textbf{memoria necesaria} es de unos 512 bytes, ya que su \textbf{SE} es del $5\%$

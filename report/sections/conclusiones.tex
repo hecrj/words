@@ -4,17 +4,23 @@
 \section{Conclusiones}
 \label{conclusiones}
 
-Una vez estudiadas las gráficas y tablas, hemos llegado a las siguientes \textbf{conclusiones}:
+Este documento es el resultado de una investigación realizada sobre un algoritmo de \textbf{estimación de la cardinalidad}:
+\texttt{HyperLogLog}. En él se describe de manera general cuáles son las bases de este algoritmo y cómo funciona. Además, se
+pone a prueba su precisión bajo un análisis estadístico.
 
+Las \textbf{conclusiones} obtenidas a partir de este ánalisis son las  siguientes:
 
 \begin{itemize}
-	\item Las estimaciones realizadas pueden ser igualmente \textbf{precisas} con \emph{datasets} grandes o pequeños.
-	
-	\item Para obtener estimaciones razonablemente \textbf{precisas ($SE\leq5\%$)} con una sola ejecución se necesitan por lo menos $512 bytes$ de \textbf{memoria}, pero los mejores resultados se empiezan a obtener a partir de $1 Kb$ de \textbf{memoria disponible}.
-	
-	\item Con \textbf{memorias reducidas} es posible obtener \textbf{precisiones similares o incluso superiores} a las obtenidas con \textbf{memorias mayores} si se lleva a cabo una media entre un \textbf{número suficiente de ejecuciones}, con la desventaja del incremento en \textbf{tiempo de ejecución}.
-
-	\item El programa es razonablemente \textbf{rápido}, siendo capaz de procesar un \emph{dataset} de más de $7\times10^6$ elementos en medio segundo.
+	\item Las estimaciones realizadas son igualmente \textbf{precisas} independientemente del \emph{dataset}.
+	\item \textbf{A más memoria disponible, más precisión}. Sin embargo, mejorar la precisión necesita cada vez de más memoria, hasta un punto en que la mejora puede considerarse inapreciable.
+	\item Para obtener estimaciones razonablemente \textbf{precisas}, por debajo del 10\% de error relativo, y en una sola ejecución se
+necesitan por lo menos 512 bytes de \textbf{memoria}, pero los mejores resultados se empiezan a obtener a partir de
+\textbf{1024 bytes} de \textbf{memoria disponible}.
+	\item Con \textbf{memorias reducidas} es posible obtener \textbf{precisiones muy similares} a las obtenidas con
+\textbf{memorias mayores} si se lleva a cabo una media entre un \textbf{número suficiente de ejecuciones}, con la desventaja del
+incremento en \textbf{tiempo total de ejecución}.
+	\item El programa es \textbf{rápido}, siendo capaz de procesar un \emph{dataset} de \textbf{más de 7 millones de elementos en medio segundo}.
 \end{itemize}
 
-Finalmente, podemos concluir que nuestro programa lleva a cabo su cometido de manera \textbf{eficaz}, ya que obtiene unos resultados considerablemente \textbf{precisos}, y \textbf{eficiente}, ya que no precisa de mucho \textbf{tiempo} ni \textbf{memoria}.
+Finalmente, se concluye que \texttt{HyperLogLog} funciona de manera \textbf{eficaz} y \textbf{eficiente}, obteniendo unos resultados
+considerablemente \textbf{precisos} sin necesitar de mucho \textbf{tiempo} ni \textbf{memoria}.

@@ -58,8 +58,10 @@ Puede consultarse el \textbf{código \texttt{C++}} implementando esta función e
 \subsection{Algoritmo \texttt{HyperLogLog}}
 \label{implementacion:algoritmo}
 
-Dado que se ha decidido utilizar una función de hash de 64 bits para minimizar el número de colisiones, resulta innecesario aplicar la
-corrección para estimaciones altas vista en la sección: \nameref{investigacion:descripcion} (\ref{investigacion:descripcion}). Esto es así
+Dado que se ha decidido utilizar una \textbf{función de hash de 64} bits para \textbf{minimizar el número de colisiones},
+resulta innecesario aplicar la
+\textbf{corrección para estimaciones altas} vista en la sección: \nameref{investigacion:descripcion} (\ref{investigacion:descripcion}).
+Esto es así
 porque, en la práctica, observar estimaciones cercanas a $2^{64}$ es poco común y, en esos casos, quizás sería mejor utilizar más bits
 en la función de hash antes que aplicar la corrección.
 
